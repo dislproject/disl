@@ -1,0 +1,174 @@
+
+{for(int d1=0; d1<D.size(); d1++)
+{
+    force=0.;
+    for (int d2=0; d2<D.size(); d2++)
+    {
+        if(d1!=d2&&D[d1].image==false)
+        {
+            force+=interaction.calc_force(d1,d2); //force on dislocation due to other dislocations
+        }
+    }
+    for (int im=0;im<ImgD.size();im++)
+    {
+        if(D[d1].fixed==false){
+            force+=interaction.calc_image_force(d1,im); //force on dislocation due to image dislocations
+        }
+    }
+    //qDebug()<<"force on"<<d1<<"="<<force;
+    D[d1].f=force; //store net force on dislocation d1.
+}
+
+//move each dislocation depending on the net force on it.
+
+QList<int> disl_group, disl_group_i;
+for (int g=0;g<=group_number;g++) //for each group find the average force on the dislocations
+{
+    disl_group.clear();
+    double tot_force=0.0;
+    int num=0;
+    double move=0.0;
+    double move_threshold;
+    for (int d=0;d<D.size();d++)
+    {
+        if (D[d].group==g&&(D[d].B==3||D[d].B==4)&&D[d].image==false)
+        {
+            tot_force+=D[d].f;
+            num++;
+            disl_group<<d;
+
+        }
+        for (int i=0;i<ImgD.size();i++)
+        {
+            if(ImgD[i].group==g&&(ImgD[i].image==false&&(ImgD[i].B==3||ImgD[i].B==4)))
+            {
+                tot_force+=ImgD[i].f;
+                num++;
+                disl_group_i<<i; //disl group needs to know this is in IMGD not D
+            }
+        }
+    }
+    move=tot_force/num;
+
+    int atoms;
+    int burgs;
+    if((disl_group.size()+disl_group_i.size())!=0){
+        if((disl_group.size()+disl_group_i.size())==1) //catch any lone dislocations
+        {
+            qDebug()<<"dislocation not associated with any group";
+            for (int i=0;i<disl_group.size();i++)
+            {
+                int index=disl_group.value(i);
+                qDebug()<<index<<D[index].x<<D[index].y<<g;
+            }
+            for (int i=0;i<disl_group_i.size();i++)
+            {
+                int index=disl_group.value(i);
+                qDebug()<<index<<ImgD[index].x<<ImgD[index].y<<g;
+            }
+        }
+        else if(disl_group.size()==2) //if group has only 2 dislocations i.e if group is a dipole
+        {
+            int d1=disl_group.value(0);
+            int d2=disl_group.value(1);
+            burgs=fabs(D[d1].B1)/basal_B;
+            int atoms=(fabs(D[d1].x-D[d2].x))/atom_sep;
+
+        }
+        else if ((disl_group.size()+disl_group_i.size())>2) //if group contains more than 2 dislocations
+        {
+
+            QList<Disl>group_of_disl;
+            for (int i=0; i<disl_group.size();i++)
+            {   int index=disl_group.value(i);
+                Disl d1=D.value(index);
+
+                group_of_disl<<d1;
+            } //store a copy of each disl in the group in a list
+            for (int i=0; i<disl_group_i.size();i++)
+            {   int index=disl_group_i.value(i);
+                Disl d1=ImgD.value(index);
+
+                group_of_disl<<d1;
+            }
+
+            for (int i =0; i<group_of_disl.size()-1; i++)
+            {
+                int j=i+1;
+                if(group_of_disl[i].x>group_of_disl[j].x)
+                {
+                    Disl d1=group_of_disl.takeAt(i);
+                    group_of_disl<<d1;
+                    i=-1;
+                }
+            }
+            //now dislocations are sorted into increasing x
+            double length=0.0;
+            for (int j=1; j<group_of_disl.size();j++) //find total length of extra material by looking at distance of
+            {                                          //each dislocation from the first, and adding or subtracting dependant on type.
+                if (group_of_disl[j].B==4)
+                {length+=(fabs(group_of_disl[j].x-group_of_disl[0].x)*fabs(group_of_disl[j].B1/basal_B));}
+                else if (group_of_disl[j].B==3)
+                {length-=(fabs(group_of_disl[j].x-group_of_disl[0].x)*fabs(group_of_disl[j].B1/basal_B));}
+            }
+            atoms=length/atom_sep;
+            burgs=1;
+
+        }
+
+
+        move_threshold=2.5;//atoms*burgs*(1.8);//*1.6E-19); //move threshold 1.8eV per atom from Reynolds and Thrower 1965
+        double dipole_stress=0.0;
+        for (int g=0;g<disl_group.size();g++) //find total stress on the group
+        {
+            int d=disl_group.value(g);
+            dipole_stress+=D[d].f/D[d].B1;
+
+        }
+
+        if (dipole_stress<=move_threshold&&dipole_stress>=-move_threshold){
+            // stress not high enough loop will not climb
+        }
+        else if (dipole_stress>move_threshold||dipole_stress<-move_threshold){
+            //stress is greater than the threshold so group will climb conservatively
+
+            for (int g=0;g<disl_group.size();g++)
+            {
+                int d=disl_group.value(g);
+
+                if (D[d].B==3||D[d].B==4)
+                {
+                    if(D[d].fixed==true)
+                    {
+                        if(D[d].B==3&&D[d].f>0) //if group is fixed at left and force is acting right allow it to move
+                        {
+                            D[d].fixed==false;
+                        }
+                        else if (D[d].B==4&&D[d].f<0) //if group is fixed at right and force acts left then allow to move
+                        {
+                            D[d].fixed==false;
+                        }
+                        else{move=0.0;}
+                    }
+                }
+            }
+
+            for (int g=0;g<disl_group.size();g++) //move all dislocations in group by same amount.
+            {
+                int d=disl_group.value(g);
+
+                if(D[d].B==3||D[d].B==4)
+                {
+                    D[d].x+=move;
+
+                }
+                else if (D[d].B==1||D[d].B==2)
+                {
+                    D[d].x+=D[d].f;
+                }
+            }
+
+        }
+    }
+}
+}

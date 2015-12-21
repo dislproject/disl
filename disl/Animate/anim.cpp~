@@ -1,0 +1,289 @@
+/*This source code copyrighted by Lazy Foo' Productions (2004-2011)
+  and may not be redestributed without written permission.*/
+
+//The headers
+#include "SDL/SDL.h"
+#include "SDL/SDL_image.h"
+#include <string>
+#include <fstream>
+#include <iostream>
+#include <cmath>
+#include <cstdlib>
+#include <sstream>
+#include <list>
+#include <Magick++.h>
+#include <time.h>
+using namespace std;
+using namespace Magick;
+// number of iterations (file number)
+#define ITS 25
+// control speed of animation
+#define DELAY 9
+
+void Display_disl();
+
+//The attributes of the screen 
+const int SCREEN_WIDTH = 1200;
+const int SCREEN_HEIGHT = 900;
+const int SCREEN_BPP = 32;
+
+//The surfaces that will be used
+SDL_Surface *disl_up = NULL;
+SDL_Surface *disl_down = NULL;
+SDL_Surface *disl_left = NULL;
+SDL_Surface *disl_right = NULL;
+SDL_Surface *edge_top = NULL;
+SDL_Surface *edge_right = NULL;
+SDL_Surface *edge_top_original = NULL;
+SDL_Surface *edge_right_original = NULL;
+SDL_Surface *background = NULL;
+SDL_Surface *screen = NULL;
+
+SDL_Surface *load_image( std::string filename )
+{
+  //Temporary storage for the image that's loaded
+  SDL_Surface* loadedImage = NULL;
+
+  //The optimized image that will be used
+  SDL_Surface* optimizedImage = NULL;
+
+  //Load the image
+  loadedImage = IMG_Load( filename.c_str() );
+
+  //If nothing went wrong in loading the image
+  if( loadedImage != NULL )
+    {
+      //Create an optimized image
+      optimizedImage = SDL_DisplayFormatAlpha( loadedImage );
+
+      //Free the old image
+      SDL_FreeSurface( loadedImage );
+    }
+
+  //Return the optimized image
+  return optimizedImage;
+}
+
+void apply_surface( int x, int y, SDL_Surface* source, SDL_Surface* destination )
+{
+  //Make a temporary rectangle to hold the offsets
+  SDL_Rect offset;
+
+  //Give the offsets to the rectangle
+  offset.x = x;
+  offset.y = y;
+
+  //Blit the surface
+  SDL_BlitSurface( source, NULL, destination, &offset );
+}
+
+int main() //int argc, char* args[] )
+{
+  //Initialize all SDL subsystems
+  if( SDL_Init( SDL_INIT_EVERYTHING ) == -1 )
+    {
+      return 1;
+    }
+
+  //Set up the screen
+  screen = SDL_SetVideoMode( SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_BPP, SDL_SWSURFACE );
+
+  //If there was an error in setting up the screen
+  if( screen == NULL )
+    {
+      return 1;
+    }
+
+  //Set the window caption
+  SDL_WM_SetCaption( "Dislocation Model", NULL );
+    
+  //Load the images
+  disl_up = load_image( "T_up.png" );
+  disl_down = load_image( "T_down.png" );
+  disl_left = load_image( "T_left.png" );
+  disl_right = load_image( "T_right.png" );
+  edge_top = load_image( "E_top.bmp" );
+  edge_right = load_image( "E_right.bmp" );
+  edge_top_original=load_image( "E_top_o.bmp" );
+  edge_right_original=load_image("E_right_o.bmp");
+  background = load_image( "background.bmp" );
+
+  // call func to read posns from file
+  Display_disl(); 
+
+  //Free the surfaces
+  SDL_FreeSurface( disl_up );
+  SDL_FreeSurface( disl_down );
+  SDL_FreeSurface( disl_left );
+  SDL_FreeSurface( disl_right );
+  SDL_FreeSurface( edge_top );
+  SDL_FreeSurface( edge_right );
+  SDL_FreeSurface( edge_top_original );
+  SDL_FreeSurface( edge_right_original );
+  SDL_FreeSurface( background );
+
+  //Quit SDL
+  SDL_Quit();   
+
+  return 0;
+}
+
+
+   
+void Display_disl(){
+  // read data from file and call func to plot 
+
+  // tmp x,y posns from file
+  int disl_x,disl_y;
+  // disl type (Up/Down)
+  char d_type[2];
+  
+  // strings to make data file names
+  std::string s1="";
+  std::string pre="./Dat_files/pos_";
+  std::string s3=".dat";
+  std::string s2;
+
+  //initialise a list of images called imageList
+  list<Image> imageList;
+  
+  // loop to read file i and plot disls
+  for ( int i = 1; i < ITS; i++ ) {
+    // apply background
+    apply_surface( 0, 0, background, screen );
+    // initialise s1
+    s1=pre;
+    // convert int to string
+    std::stringstream out;
+    out << i;
+    s2 = out.str();
+
+    s1.append(s2);
+    s1.append(s3);    
+
+    // open file for reading
+
+    std::ifstream b_file;
+    // convert string to char pointer
+    // open file
+    if( b_file.good() ) {
+      b_file.open( s1.c_str() ) ;
+    }
+    else { 
+      std::cout << "No file to read!" << std::endl;
+      break;
+    }
+    
+    // loop to read data from current open file and display
+    while(!b_file.eof()){    
+      b_file >> disl_x;
+      b_file >> disl_y;
+      b_file >> d_type;    
+      
+      // check if disl up or down and apply to screen
+      if( !strcmp( d_type, "U" ) ) {
+	apply_surface( disl_x, disl_y, disl_up, screen );
+      }       
+      if( !strcmp( d_type, "D" ) ) {
+	apply_surface( disl_x, disl_y, disl_down, screen );
+      }  
+      if( !strcmp( d_type, "LT" ) ) {
+	apply_surface( disl_x, disl_y, disl_left, screen );
+      }       
+      if( !strcmp( d_type, "RT" ) ) {
+        disl_x-=14;
+	apply_surface( disl_x, disl_y, disl_right, screen );
+      }
+      if( !strcmp( d_type, "T" ) ) {
+	apply_surface( disl_x, disl_y, edge_top, screen );
+      }         
+      if( !strcmp( d_type, "R" ) ) {
+	apply_surface( disl_x, disl_y, edge_right, screen );
+      }   
+      if( !strcmp( d_type, "OT" ) ) {
+	apply_surface( disl_x, disl_y, edge_top_original, screen );
+      }         
+      if( !strcmp( d_type, "OR" ) ) {
+	apply_surface( disl_x, disl_y, edge_right_original, screen );
+      }
+      
+    }
+
+    //Save .bmp images for each set of position co-ordinates
+    //with the name bmp01.bmp to images folder.
+    char filename[32];
+    snprintf(filename, sizeof(char) * 32, "images/bmp0%d.bmp", i);
+    SDL_SaveBMP(screen, filename);
+
+    //create a string called caption and write run parameters to it.
+    //run parameters read from comment file produced by write_to_file class.
+   
+    std::string caption;
+    std::ifstream c_file;
+    char comment_filename[64];
+    snprintf(comment_filename, sizeof(char)* 64, "Dat_files/comment0%d.dat", i);
+    c_file.open(comment_filename);
+    std::string strain, disl, cexp, aexp, iteration;
+    c_file>>strain;
+    c_file>>disl;
+    c_file>>cexp;
+    c_file>>aexp;
+    c_file>>iteration;
+    strain.append(" strain.");
+    disl.append(" dislocations.");
+    cexp.append(" expansion in c.");
+    aexp.append(" expansion in a.");
+    iteration.append(" iteration number.");
+ 
+    //write the information to each image file output by SDL
+    //annotate function takes variable to print,
+    //x+yposition to print and which corner of the screen to measure from.
+    Image bmpimage;
+    bmpimage.read(filename);
+    bmpimage.annotate(strain,"+40+20", NorthWestGravity);
+    bmpimage.annotate(disl,"+40+60", NorthWestGravity);
+    bmpimage.annotate(cexp,"+40+100", NorthWestGravity);
+    bmpimage.annotate(aexp,"+40+140", NorthWestGravity);
+    bmpimage.annotate(iteration,"+40+180", NorthWestGravity);
+    bmpimage.write(filename);//write annotated image back to file
+
+    //stores the bmp images in the list
+    readImages(&imageList, filename);
+   
+    // display screen 
+    if( SDL_Flip( screen ) == -1 )
+      {
+	std::cout<<"error sending output to screen";
+      } 
+
+    // Pause image on s"Caption, eg Anisotropic strain, 12 Dislocations, 2 iterations, c expansion = 32523 a expansion = -xxxcreen before next iteration
+    SDL_Delay( DELAY );
+    // close current data file
+    b_file.close();
+  }
+  //create string for the filename of the animation
+    time_t currenttime;
+    time( &currenttime);
+    std::string d1="animations/animation";
+    std::string d2=ctime (&currenttime);
+    std::string d3=".gif";
+    d1.append(d2);
+    d1.append(d3);
+  //writes the images which are stored in imageList to an animated gif.
+    writeImages(imageList.begin(), imageList.end(), d1.c_str(), true );
+  
+  //Loop to delete the stored .bmp image files and position files.
+  for ( int i = 0; i < ITS; i++ ) {
+   char imagename[32];
+   snprintf(imagename, sizeof(char) * 32, "images/bmp0%d.bmp", i);
+   remove(imagename);
+   char datname[32];
+   snprintf(datname,sizeof(char)*32,"Dat_files/pos_%d.dat", i);
+   remove(datname);
+   char commentname[64];
+   snprintf(commentname,sizeof(char)*64,"Dat_files/comment0%d.dat", i);
+   remove(commentname);
+   }
+}
+
+

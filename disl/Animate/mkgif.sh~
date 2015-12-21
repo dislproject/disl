@@ -1,0 +1,7 @@
+#command to convert all bmp files to an
+#animated gif and then remove bmp files.
+
+convert -delay 10 -loop 0 bmp0*.bmp disl.gif
+./disl.gif
+
+rm *.bmp
