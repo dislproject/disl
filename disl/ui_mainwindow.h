@@ -141,26 +141,26 @@ public:
 
 #include "renderarea.h"
 #include <QtCore/QVariant>
-#include <QtGui/QAction>
-#include <QtGui/QApplication>
-#include <QtGui/QButtonGroup>
-#include <QtGui/QCheckBox>
-#include <QtGui/QComboBox>
-#include <QtGui/QDoubleSpinBox>
-#include <QtGui/QFormLayout>
-#include <QtGui/QGridLayout>
-#include <QtGui/QHBoxLayout>
-#include <QtGui/QHeaderView>
-#include <QtGui/QLabel>
-#include <QtGui/QMainWindow>
-#include <QtGui/QMenuBar>
-#include <QtGui/QPushButton>
-#include <QtGui/QSpacerItem>
-#include <QtGui/QSpinBox>
-#include <QtGui/QStatusBar>
-#include <QtGui/QTabWidget>
-#include <QtGui/QVBoxLayout>
-#include <QtGui/QWidget>
+#include <QtWidgets/QAction>
+#include <QtWidgets/QApplication>
+#include <QtWidgets/QButtonGroup>
+#include <QtWidgets/QCheckBox>
+#include <QtWidgets/QComboBox>
+#include <QtWidgets/QDoubleSpinBox>
+#include <QtWidgets/QFormLayout>
+#include <QtWidgets/QGridLayout>
+#include <QtWidgets/QHBoxLayout>
+#include <QtWidgets/QHeaderView>
+#include <QtWidgets/QLabel>
+#include <QtWidgets/QMainWindow>
+#include <QtWidgets/QMenuBar>
+#include <QtWidgets/QPushButton>
+#include <QtWidgets/QSpacerItem>
+#include <QtWidgets/QSpinBox>
+#include <QtWidgets/QStatusBar>
+#include <QtWidgets/QTabWidget>
+#include <QtWidgets/QVBoxLayout>
+#include <QtWidgets/QWidget>
 
 QT_BEGIN_NAMESPACE
 
@@ -696,69 +696,69 @@ void setupUi(QMainWindow *MainWindow)
 
     void retranslateUi(QMainWindow *MainWindow)
     {
-        MainWindow->setWindowTitle(QApplication::translate("MainWindow", "Dislocation Program", 0, QApplication::UnicodeUTF8));
-        actionAbout->setText(QApplication::translate("MainWindow", "About", 0, QApplication::UnicodeUTF8));
-        actionReadme->setText(QApplication::translate("MainWindow", "Readme", 0, QApplication::UnicodeUTF8));
-        actionQuit->setText(QApplication::translate("MainWindow", "Quit", 0, QApplication::UnicodeUTF8));
+        MainWindow->setWindowTitle(QApplication::translate("MainWindow", "Dislocation Program", 0));
+        actionAbout->setText(QApplication::translate("MainWindow", "About", 0));
+        actionReadme->setText(QApplication::translate("MainWindow", "Readme", 0));
+        actionQuit->setText(QApplication::translate("MainWindow", "Quit", 0));
 
-        menuFile->setTitle(QApplication::translate("MainWindow", "File", 0, QApplication::UnicodeUTF8));
-        menuHelp->setTitle(QApplication::translate("MainWindow", "Help", 0, QApplication::UnicodeUTF8));
-        label_16->setText(QApplication::translate("MainWindow", "c Expansion:", 0, QApplication::UnicodeUTF8));
+        menuFile->setTitle(QApplication::translate("MainWindow", "File", 0));
+        menuHelp->setTitle(QApplication::translate("MainWindow", "Help", 0));
+        label_16->setText(QApplication::translate("MainWindow", "c Expansion:", 0));
         label_17->setText(QString());
-        label_14->setText(QApplication::translate("MainWindow", "a Expansion:", 0, QApplication::UnicodeUTF8));
+        label_14->setText(QApplication::translate("MainWindow", "a Expansion:", 0));
         label_15->setText(QString());
-        reset_button->setText(QApplication::translate("MainWindow", "Reset", 0, QApplication::UnicodeUTF8));
-        run_button->setText(QApplication::translate("MainWindow", "Run", 0, QApplication::UnicodeUTF8));
-        replay_button->setText(QApplication::translate("MainWindow", "Replay", 0, QApplication::UnicodeUTF8));
-        stop_button->setText(QApplication::translate("MainWindow", "Stop", 0, QApplication::UnicodeUTF8));
-        continue_button->setText(QApplication::translate("MainWindow", "Continue", 0, QApplication::UnicodeUTF8));
+        reset_button->setText(QApplication::translate("MainWindow", "Reset", 0));
+        run_button->setText(QApplication::translate("MainWindow", "Run", 0));
+        replay_button->setText(QApplication::translate("MainWindow", "Replay", 0));
+        stop_button->setText(QApplication::translate("MainWindow", "Stop", 0));
+        continue_button->setText(QApplication::translate("MainWindow", "Continue", 0));
 
-        label->setText(QApplication::translate("MainWindow", "Strains", 0, QApplication::UnicodeUTF8));
+        label->setText(QApplication::translate("MainWindow", "Strains", 0));
         comboBox_4->clear();
         comboBox_4->insertItems(0, QStringList()
-                                << QApplication::translate("MainWindow", "Anisotropic", 0, QApplication::UnicodeUTF8)
-                                << QApplication::translate("MainWindow", "Isotropic", 0, QApplication::UnicodeUTF8)
+                                << QApplication::translate("MainWindow", "Anisotropic", 0)
+                                << QApplication::translate("MainWindow", "Isotropic", 0)
                                 );
-        label_2->setText(QApplication::translate("MainWindow", "Normal/Test", 0, QApplication::UnicodeUTF8));
+        label_2->setText(QApplication::translate("MainWindow", "Normal/Test", 0));
         test_combobox->clear();
         test_combobox->insertItems(0, QStringList()
-                                   << QApplication::translate("MainWindow", "Normal Run", 0, QApplication::UnicodeUTF8)
-                                   << QApplication::translate("MainWindow", "Line test", 0, QApplication::UnicodeUTF8)
-                                   << QApplication::translate("MainWindow", "Convergence test", 0, QApplication::UnicodeUTF8)
-                                   << QApplication::translate("MainWindow", "Energy Profile test", 0, QApplication::UnicodeUTF8)
+                                   << QApplication::translate("MainWindow", "Normal Run", 0)
+                                   << QApplication::translate("MainWindow", "Line test", 0)
+                                   << QApplication::translate("MainWindow", "Convergence test", 0)
+                                   << QApplication::translate("MainWindow", "Energy Profile test", 0)
                                    );
-        label_3->setText(QApplication::translate("MainWindow", "Stress Mapping", 0, QApplication::UnicodeUTF8));
+        label_3->setText(QApplication::translate("MainWindow", "Stress Mapping", 0));
         mapping_combobox->clear();
         mapping_combobox->insertItems(0, QStringList()
-                                      << QApplication::translate("MainWindow", "None", 0, QApplication::UnicodeUTF8)
-                                      << QApplication::translate("MainWindow", "Displacement (net)", 0, QApplication::UnicodeUTF8)
-                                      << QApplication::translate("MainWindow", "Displacement (x)", 0, QApplication::UnicodeUTF8)
-                                      << QApplication::translate("MainWindow", "Displacement (y)", 0, QApplication::UnicodeUTF8)
-                                      << QApplication::translate("MainWindow", "Stress (net)", 0, QApplication::UnicodeUTF8)
-                                      << QApplication::translate("MainWindow", "Stress (x)", 0, QApplication::UnicodeUTF8)
-                                      << QApplication::translate("MainWindow", "Stress (y)", 0, QApplication::UnicodeUTF8)
-                                      << QApplication::translate("MainWindow", "Strain (net)", 0, QApplication::UnicodeUTF8)
-                                      << QApplication::translate("MainWindow", "Strain (x)", 0, QApplication::UnicodeUTF8)
-                                      << QApplication::translate("MainWindow", "Strain (y)", 0, QApplication::UnicodeUTF8)
+                                      << QApplication::translate("MainWindow", "None", 0)
+                                      << QApplication::translate("MainWindow", "Displacement (net)", 0)
+                                      << QApplication::translate("MainWindow", "Displacement (x)", 0)
+                                      << QApplication::translate("MainWindow", "Displacement (y)", 0)
+                                      << QApplication::translate("MainWindow", "Stress (net)", 0)
+                                      << QApplication::translate("MainWindow", "Stress (x)", 0)
+                                      << QApplication::translate("MainWindow", "Stress (y)", 0)
+                                      << QApplication::translate("MainWindow", "Strain (net)", 0)
+                                      << QApplication::translate("MainWindow", "Strain (x)", 0)
+                                      << QApplication::translate("MainWindow", "Strain (y)", 0)
                                       );
-        energy_checkBox->setText(QApplication::translate("MainWindow", "Calculate Energy", 0, QApplication::UnicodeUTF8));
-        inplane_checkBox->setText(QApplication::translate("MainWindow", "InPlane DD", 0, QApplication::UnicodeUTF8));
-        tabWidget->setTabText(tabWidget->indexOf(tab), QApplication::translate("MainWindow", "Job Type", 0, QApplication::UnicodeUTF8));
-        label_7->setText(QApplication::translate("MainWindow", "Burgers Vector:", 0, QApplication::UnicodeUTF8));
-        label_4->setText(QApplication::translate("MainWindow", "Iterations:", 0, QApplication::UnicodeUTF8));
-        label_5->setText(QApplication::translate("MainWindow", "Timesteps:", 0, QApplication::UnicodeUTF8));
-        label_6->setText(QApplication::translate("MainWindow", "Increment dislocations by:", 0, QApplication::UnicodeUTF8));
-        basals_checkBox->setText(QApplication::translate("MainWindow", "Basal Dislocations", 0, QApplication::UnicodeUTF8));
-        tabWidget->setTabText(tabWidget->indexOf(tab_3), QApplication::translate("MainWindow", "Dislocations", 0, QApplication::UnicodeUTF8));
-        randomise_checkBox->setText(QApplication::translate("MainWindow", "Randomise", 0, QApplication::UnicodeUTF8));
-        label_8->setText(QApplication::translate("MainWindow", "<html><head/><body><p><span style=\" font-size:14pt; font-weight:600;\">Dislocation Positions</span></p></body></html>", 0, QApplication::UnicodeUTF8));
-        label_9->setText(QApplication::translate("MainWindow", "<html><head/><body><p><span style=\" font-size:14pt; font-weight:600;\">Material Dimensions</span></p></body></html>", 0, QApplication::UnicodeUTF8));
-        label_10->setText(QApplication::translate("MainWindow", "Height (A)", 0, QApplication::UnicodeUTF8));
-        label_11->setText(QApplication::translate("MainWindow", "Width (A)", 0, QApplication::UnicodeUTF8));
-        label_12->setText(QApplication::translate("MainWindow", "<html><head/><body><p><span style=\" font-size:14pt; font-weight:600;\">Repeat cells</span></p></body></html>", 0, QApplication::UnicodeUTF8));
-        label_13->setText(QApplication::translate("MainWindow", "<html><head/><body><p><span style=\" font-size:14pt; font-weight:600;\">Applied Stress (GPa)</span></p></body></html>", 0, QApplication::UnicodeUTF8));
-        label_18->setText(QApplication::translate("MainWindow", "Number of Disls", 0, QApplication::UnicodeUTF8));
-        tabWidget->setTabText(tabWidget->indexOf(tab_2), QApplication::translate("MainWindow", "Material Properties", 0, QApplication::UnicodeUTF8));
+        energy_checkBox->setText(QApplication::translate("MainWindow", "Calculate Energy", 0));
+        inplane_checkBox->setText(QApplication::translate("MainWindow", "InPlane DD", 0));
+        tabWidget->setTabText(tabWidget->indexOf(tab), QApplication::translate("MainWindow", "Job Type", 0));
+        label_7->setText(QApplication::translate("MainWindow", "Burgers Vector:", 0));
+        label_4->setText(QApplication::translate("MainWindow", "Iterations:", 0));
+        label_5->setText(QApplication::translate("MainWindow", "Timesteps:", 0));
+        label_6->setText(QApplication::translate("MainWindow", "Increment dislocations by:", 0));
+        basals_checkBox->setText(QApplication::translate("MainWindow", "Basal Dislocations", 0));
+        tabWidget->setTabText(tabWidget->indexOf(tab_3), QApplication::translate("MainWindow", "Dislocations", 0));
+        randomise_checkBox->setText(QApplication::translate("MainWindow", "Randomise", 0));
+        label_8->setText(QApplication::translate("MainWindow", "<html><head/><body><p><span style=\" font-size:14pt; font-weight:600;\">Dislocation Positions</span></p></body></html>", 0));
+        label_9->setText(QApplication::translate("MainWindow", "<html><head/><body><p><span style=\" font-size:14pt; font-weight:600;\">Material Dimensions</span></p></body></html>", 0));
+        label_10->setText(QApplication::translate("MainWindow", "Height (A)", 0));
+        label_11->setText(QApplication::translate("MainWindow", "Width (A)", 0));
+        label_12->setText(QApplication::translate("MainWindow", "<html><head/><body><p><span style=\" font-size:14pt; font-weight:600;\">Repeat cells</span></p></body></html>", 0));
+        label_13->setText(QApplication::translate("MainWindow", "<html><head/><body><p><span style=\" font-size:14pt; font-weight:600;\">Applied Stress (GPa)</span></p></body></html>", 0));
+        label_18->setText(QApplication::translate("MainWindow", "Number of Disls", 0));
+        tabWidget->setTabText(tabWidget->indexOf(tab_2), QApplication::translate("MainWindow", "Material Properties", 0));
     } // retranslateUi
 
 };

@@ -1,4 +1,5 @@
 #include <QtGui>
+#include <QtWidgets>//VERYTEMPORARY
 #include <QMovie>
 #include <QDebug>
 #include "ImageMagick/Magick++.h"
@@ -689,8 +690,8 @@ int MainWindow::run_main_program()
 void MainWindow::include_energy()
 //if isotropic strains are selected then display labels for Energy display.
 {
-    ui.label_12->setText(QApplication::translate("MainWindow", "Energy:", 0, QApplication::UnicodeUTF8));
-    ui.label_13->setText(QApplication::translate("MainWindow", "", 0, QApplication::UnicodeUTF8));
+    ui.label_12->setText(QApplication::translate("MainWindow", "Energy:", 0));
+    ui.label_13->setText(QApplication::translate("MainWindow", "", 0));
 }
 
 
