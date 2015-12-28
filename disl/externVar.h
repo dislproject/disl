@@ -4,7 +4,7 @@
 #include "Eigen/Dense"
 #include <stdio.h>
 #include <stdlib.h>
-#include <QtGui>
+#include <QtWidgets>
 extern double total_area;
 extern double material_height;
 extern double material_width;

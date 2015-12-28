@@ -1,6 +1,6 @@
-#include <QtGui>
+#include <QtWidgets>
 #include <QDebug>
-#include "ImageMagick/Magick++.h"
+#include <ImageMagick/Magick++.h>
 #include "externVar.h"
 #include "renderarea.h"
 #include <string>

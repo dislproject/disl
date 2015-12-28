@@ -1,8 +1,7 @@
-#include <QtGui>
-#include <QtWidgets>//VERYTEMPORARY
+#include <QtWidgets>
 #include <QMovie>
 #include <QDebug>
-#include "ImageMagick/Magick++.h"
+#include <ImageMagick/Magick++.h>
 #include <math.h>
 #include "renderarea.h"
 #include "mainwindow.h"

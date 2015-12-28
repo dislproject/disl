@@ -30,8 +30,6 @@ DEPENDPATH += . \
     Eigen/src/Core/arch/SSE \
 
 INCLUDEPATH += /usr/include/ImageMagick \
-    /usr/include/ImageMagick/Magick++ \
-    /usr/include/qt5/QtWidgets \
 
 
 # Input
@@ -42,8 +40,6 @@ HEADERS += Disl.hpp \
     mainwindow.h \
     Structure.hpp \
     Write_to_file.hpp \
-    Boost/random.hpp \
-    Boost/generator_iterator.hpp \
     Eigen/src/Cholesky/LDLT.h \
     Eigen/src/Cholesky/LLT.h \
     Eigen/src/Core/Array.h \
@@ -244,8 +240,6 @@ HEADERS += Disl.hpp \
     interaction.h \
     Force.hpp \
     test.hpp \
-    boost/random.hpp \
-    boost/generator_iterator.hpp \
     inplane.hpp \
     strain_map.hpp \
     grid.hpp
@@ -267,10 +261,6 @@ RESOURCES += mainwindow.qrc
 LIBS += \
     -lMagick++ \
     -lMagickCore \
-    -L/usr/lib/x86_64-linux-gnu/libMagickCore.so.5 \
-
-
-QMAKE_CXXFLAGS +=  -lMagickCore \
 
 # jon: VERYTEMPORARY - remove "-Wall" from compiler (too many warnings)
 CONFIG += warn_off
