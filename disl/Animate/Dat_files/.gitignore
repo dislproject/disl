@@ -1,0 +1,5 @@
+# Dat_files contains just log files
+# Ignore everything in this directory
+*
+# Except this file
+!.gitignore
