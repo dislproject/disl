@@ -1,7 +1,7 @@
 #ifndef EXTERNVAR_H
 #define EXTERNVAR_H
 
-#include "Eigen/Dense"
+#include <Eigen/Dense>
 #include <stdio.h>
 #include <stdlib.h>
 #include <QtWidgets>
