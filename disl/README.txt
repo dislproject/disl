@@ -198,7 +198,7 @@ It places libraries in "/usr/lib/x86_64-linux-gnu".
 This places header files in "/usr/include/boost".
 
 5. Use Eigen.
-- The whole of Eigen sources are supplied inside "disl/Eigen".
+- The whole of Eigen sources are supplied inside "../include/Eigen".
 - I am unclear about just what version of Eigen was originally used for this.
 
 6. Now ready to compile in QT Creator.
