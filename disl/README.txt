@@ -15,6 +15,17 @@ Date: 03/10/2012
 /////////////////////////////////////////////////////////////////////////
 
 
+/////////////////////////////////////////////////////////////////////////
+Date: 11/01/2015
+I, Jonathan Barchan, jnbarchan@gmail.com, have been asked by M. Heggie to
+help maintain this project code.
+I am not associated with any University and am not a physicist/chemist
+--- I am a programmer!
+My first task is to make this code compilable on newer Ubuntu systems,
+and clarify what is required.
+/////////////////////////////////////////////////////////////////////////
+
+
 1. Purpose
 The dislocation program calculates the elastic strains of dislocations in
 graphite and creates an animation of the expansion of the material as the 
@@ -31,6 +42,7 @@ to annotate images and create the animated gif.
 Both of these packages can be downloaded for free.
 Qt creator is found in the Ubuntu software centre.
 Imagemagick libraries can be installed using apt-get in the command line.
+[jnbarchan: See comments under "Version 3.1 updates" at end.]
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -156,5 +168,46 @@ levels out. Updated interaction energies so that only half of the image-disl
 interaction is added as half of the interaction energy is attributed to the
 image cell.
 
+//////////////////////////////////////////////////////////////////////////
 
+Version 3.1 updates:
+[jnbarchan: I have taken over managing the code of this project]
 
+* The code has been placed under Open Source GNU 3.0 License.
+It has been uploaded to github: https://github.com/dislproject/disl
+
+* Requirements to compile (external packages used by Disl):
+
+1. Install Ubuntu 14.04 LTS.
+This includes Qt (Version Qt Creator 3.0.1, Based on Qt 5.2.1).
+  + sudo apt-get install build-essential module-assistant
+
+2. Fetch from github: I am using "~/disl.master" as workspace.
+  + sudo apt-get install git
+  + git clone https://github.com/dislproject/disl.git ~/disl.master
+It will create a "disl" sub-directory for Disl sources.
+
+3. Install ImageMagick.
+  + sudo apt-get install Imagemagick 
+  + sudo apt-get install libmagickcore-dev libmagickwand-dev libmagick++-dev 
+This places header files in "/usr/include/ImageMagick".
+It places libraries in "/usr/lib/x86_64-linux-gnu".
+
+4. Install Boost.
+  + sudo apt-get install libboost-all-dev 
+This places header files in "/usr/include/boost".
+
+5. Use Eigen.
+- The whole of Eigen sources are supplied inside "disl/Eigen".
+- I am unclear about just what version of Eigen was originally used for this.
+
+6. Now ready to compile in QT Creator.
+The first thing to do is run "qmake", to generate the Makefile on your machine.
+I have chosen to include the currently-generated "Makefile" in git source
+control, because it may be useful to compare against what is generated now.
+You might like to make a copy of it before running "qmake".
+  + make qmake
+    ( /usr/lib/x86_64-linux-gnu/qt5/bin/qmake -spec linux-g++-64 CONFIG+=debug \
+      CONFIG+=declarative_debug CONFIG+=qml_debug TARGET=Disl -o Makefile Disl.pro )
+
+//////////////////////////////////////////////////////////////////////////
