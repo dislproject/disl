@@ -197,9 +197,9 @@ It places libraries in "/usr/lib/x86_64-linux-gnu".
   + sudo apt-get install libboost-all-dev 
 This places header files in "/usr/include/boost".
 
-5. Use Eigen.
-- The whole of Eigen sources are supplied inside "../include/Eigen".
-- I am unclear about just what version of Eigen was originally used for this.
+5. Install Eigen.
+  + sudo apt-get install libeigen3-dev
+This places header files in "/usr/include/eigen3".
 
 6. Now ready to compile in QT Creator.
 The first thing to do is run "qmake", to generate the Makefile on your machine.

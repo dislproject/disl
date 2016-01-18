@@ -6,7 +6,7 @@ TARGET = Disl
 DEPENDPATH += . \
     Animate \
 
-INCLUDEPATH += ../include \
+INCLUDEPATH += /usr/include/eigen3 \
     /usr/include/ImageMagick \
 
 # Input
