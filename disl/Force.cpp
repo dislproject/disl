@@ -233,9 +233,10 @@ double Force::calc_f_d1_d2(int d1,int d2, double x2)
 
 double Force::appStress(int d)
 {
-double fx, fy;
+double fx;
+//double fy;
 fx=(D[d].bx*sxy)+(D[d].by*syx);
-fy=(D[d].bx*sxx)+(D[d].by*syy);
+//fy=(D[d].bx*sxx)+(D[d].by*syy);
 return fx;
 }
 

@@ -13,8 +13,8 @@ MAKEFILE      = Makefile
 CC            = gcc
 CXX           = g++
 DEFINES       = -DQT_QML_DEBUG -DQT_DECLARATIVE_DEBUG -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_CORE_LIB
-CFLAGS        = -m64 -pipe -g -w -D_REENTRANT -fPIE $(DEFINES)
-CXXFLAGS      = -m64 -pipe -g -w -D_REENTRANT -fPIE $(DEFINES)
+CFLAGS        = -m64 -pipe -g -Wall -W -D_REENTRANT -fPIE $(DEFINES)
+CXXFLAGS      = -m64 -pipe -g -Wall -W -D_REENTRANT -fPIE $(DEFINES)
 INCPATH       = -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++-64 -I. -I/usr/include/eigen3 -I/usr/include/ImageMagick -I/usr/include/qt5 -I/usr/include/qt5/QtWidgets -I/usr/include/qt5/QtGui -I/usr/include/qt5/QtCore -I.
 LINK          = g++
 LFLAGS        = -m64
@@ -122,10 +122,10 @@ DIST          = /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/spec_pre.prf \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/default_pre.prf \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/resolve_config.prf \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/default_post.prf \
-		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/warn_off.prf \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/qml_debug.prf \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/declarative_debug.prf \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/unix/gdb_dwarf_index.prf \
+		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/warn_on.prf \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/qt.prf \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/resources.prf \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/moc.prf \
@@ -218,10 +218,10 @@ Makefile: Disl.pro /usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++-64/qmake.conf
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/default_pre.prf \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/resolve_config.prf \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/default_post.prf \
-		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/warn_off.prf \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/qml_debug.prf \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/declarative_debug.prf \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/unix/gdb_dwarf_index.prf \
+		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/warn_on.prf \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/qt.prf \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/resources.prf \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/moc.prf \
@@ -284,10 +284,10 @@ Makefile: Disl.pro /usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++-64/qmake.conf
 /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/default_pre.prf:
 /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/resolve_config.prf:
 /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/default_post.prf:
-/usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/warn_off.prf:
 /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/qml_debug.prf:
 /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/declarative_debug.prf:
 /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/unix/gdb_dwarf_index.prf:
+/usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/warn_on.prf:
 /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/qt.prf:
 /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/resources.prf:
 /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/moc.prf:
@@ -335,65 +335,65 @@ compiler_rcc_make_all: qrc_mainwindow.cpp
 compiler_rcc_clean:
 	-$(DEL_FILE) qrc_mainwindow.cpp
 qrc_mainwindow.cpp: mainwindow.qrc \
-		Animate/e_point.png \
-		Animate/-7.png \
-		Animate/7.png \
 		Animate/D7.png \
-		Animate/T_right.png \
-		Animate/D11.png \
-		Animate/E_top.png \
-		Animate/-6.png \
-		Animate/6.png \
-		Animate/D6.png \
-		Animate/TT_up.png \
-		Animate/D10.png \
-		Animate/a_point.png \
-		Animate/T_left_img.png \
-		Animate/-5.png \
-		Animate/5.png \
-		Animate/DT_up.png \
-		Animate/D5.png \
-		Animate/test_up.png \
-		Animate/TT_down.png \
-		Animate/-4.png \
-		Animate/4.png \
-		Animate/DT_left.png \
-		Animate/T_up_img.png \
-		Animate/area_point.png \
-		Animate/T_down_img.png \
-		Animate/-3.png \
-		Animate/3.png \
-		Animate/TT_right.png \
-		Animate/DT_right.png \
-		Animate/T_down.png \
-		Animate/D16.png \
 		Animate/-2.png \
-		Animate/2.png \
-		Animate/c_point.png \
-		Animate/test_down.png \
-		Animate/D15.png \
-		Animate/E_right.png \
-		Animate/-1.png \
-		Animate/1.png \
-		Animate/T_up.png \
-		Animate/T_right_img.png \
-		Animate/TT_left.png \
-		Animate/D14.png \
-		Animate/0.png \
-		Animate/10.png \
-		Animate/-9.png \
-		Animate/9.png \
-		Animate/D9.png \
+		Animate/3.png \
 		Animate/D13.png \
+		Animate/D6.png \
+		Animate/-1.png \
 		Animate/E_right_o.png \
-		Animate/T_left.png \
+		Animate/T_left_img.png \
 		Animate/-10.png \
-		Animate/-8.png \
-		Animate/8.png \
-		Animate/D8.png \
-		Animate/DT_down.png \
+		Animate/e_point.png \
+		Animate/E_top.png \
+		Animate/2.png \
 		Animate/D12.png \
-		Animate/E_top_o.png
+		Animate/D5.png \
+		Animate/TT_up.png \
+		Animate/T_up.png \
+		Animate/1.png \
+		Animate/10.png \
+		Animate/T_down.png \
+		Animate/-9.png \
+		Animate/D11.png \
+		Animate/a_point.png \
+		Animate/DT_up.png \
+		Animate/area_point.png \
+		Animate/0.png \
+		Animate/T_down_img.png \
+		Animate/-8.png \
+		Animate/D10.png \
+		Animate/9.png \
+		Animate/TT_down.png \
+		Animate/-7.png \
+		Animate/8.png \
+		Animate/DT_down.png \
+		Animate/E_top_o.png \
+		Animate/-6.png \
+		Animate/7.png \
+		Animate/T_left.png \
+		Animate/T_right.png \
+		Animate/T_up_img.png \
+		Animate/-5.png \
+		Animate/c_point.png \
+		Animate/6.png \
+		Animate/E_right.png \
+		Animate/D16.png \
+		Animate/D9.png \
+		Animate/TT_right.png \
+		Animate/-4.png \
+		Animate/TT_left.png \
+		Animate/5.png \
+		Animate/DT_right.png \
+		Animate/D15.png \
+		Animate/test_down.png \
+		Animate/test_up.png \
+		Animate/D8.png \
+		Animate/-3.png \
+		Animate/T_right_img.png \
+		Animate/4.png \
+		Animate/D14.png \
+		Animate/DT_left.png
 	/usr/lib/x86_64-linux-gnu/qt5/bin/rcc -name mainwindow mainwindow.qrc -o qrc_mainwindow.cpp
 
 compiler_moc_header_make_all: moc_mainwindow.cpp moc_renderarea.cpp

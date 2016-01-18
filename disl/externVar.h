@@ -1,6 +1,10 @@
 #ifndef EXTERNVAR_H
 #define EXTERNVAR_H
 
+// Define a macro to avoid gcc "-Wunused-parameter/variable" warnings
+// on variables which are not used (especially function parameters)
+#define UNUSED(...) (void)(__VA_ARGS__)
+
 #include <Eigen/Dense>
 #include <stdio.h>
 #include <stdlib.h>

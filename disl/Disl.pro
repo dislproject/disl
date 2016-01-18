@@ -44,7 +44,4 @@ LIBS += \
     -lMagick++ \
     -lMagickCore \
 
-# jon: VERYTEMPORARY - remove "-Wall" from compiler (too many warnings)
-CONFIG += warn_off
-
 QT += widgets

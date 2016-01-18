@@ -201,7 +201,7 @@ This places header files in "/usr/include/boost".
   + sudo apt-get install libeigen3-dev
 This places header files in "/usr/include/eigen3".
 
-6. Now ready to compile in QT Creator.
+6. Now ready to compile in Qt Creator (or externally).
 The first thing to do is run "qmake", to generate the Makefile on your machine.
 I have chosen to include the currently-generated "Makefile" in git source
 control, because it may be useful to compare against what is generated now.
@@ -209,5 +209,11 @@ You might like to make a copy of it before running "qmake".
   + make qmake
     ( /usr/lib/x86_64-linux-gnu/qt5/bin/qmake -spec linux-g++-64 CONFIG+=debug \
       CONFIG+=declarative_debug CONFIG+=qml_debug TARGET=Disl -o Makefile Disl.pro )
+
+7. Now compile in Qt Creator (or externally).
+  + make Disl
+
+8. Now run in Qt Creator (or externally).
+  + ./Disl
 
 //////////////////////////////////////////////////////////////////////////

@@ -21,10 +21,10 @@ int Interaction::Calc_interaction(int d1, int d2, int x1, int x2)
     if((R<=2E10*burg1_mag)&&(D[d1].y==D[d2].y)){interact=true;}
     if((D[d1].B==1||D[d1].B==2||D[d2].B==1||D[d2].B==2)&&(R<=20E10*burg1_mag)){interact=true;}
     if((D[d1].B==1&&D[d2].B==3)||(D[d2].B==1&&D[d1].B==3)||(D[d1].B==1&&D[d2].B==4)||(D[d2].B==1&&D[d1].B==4))
-    {interact==false;}
+    {interact=false;}
     if((D[d1].B==2&&D[d2].B==3)||(D[d2].B==2&&D[d1].B==3)||(D[d1].B==2&&D[d2].B==4)||(D[d2].B==2&&D[d1].B==4))
-    {interact==false;}
-    if(D[d1].y!=D[d2].y){interact==false;}
+    {interact=false;}
+    if(D[d1].y!=D[d2].y){interact=false;}
 
 
     if(interact==true)
@@ -382,7 +382,7 @@ bool Interaction::lone_dislocations()
 
 bool Interaction::check_position(double x, double y)
 {
-    typedef Eigen::Matrix<double,3,1> vectorDim;
+//    typedef Eigen::Matrix<double,3,1> vectorDim;
     for (int i=0; i<D.size();i++)
     {
         double ysep=fabs(D[i].y-y);
@@ -581,13 +581,13 @@ int Interaction::Calc_interaction(int d1, int d2)
     {interact=true;}
 
     if((D[d1].B==1&&D[d2].B==3)||(D[d2].B==1&&D[d1].B==3)||(D[d1].B==1&&D[d2].B==4)||(D[d2].B==1&&D[d1].B==4))
-    {interact==false;}
+    {interact=false;}
     if((D[d1].B==2&&D[d2].B==3)||(D[d2].B==2&&D[d1].B==3)||(D[d1].B==2&&D[d2].B==4)||(D[d2].B==2&&D[d1].B==4))
-    {interact==false;}
+    {interact=false;}
     if(D[d1].y!=D[d2].y)
-    {interact==false;}
+    {interact=false;}
     if(d1<0||d2<0)
-    {interact==false;}
+    {interact=false;}
     if(interact==true)
 
     {
@@ -657,7 +657,7 @@ int Interaction::Calc_interaction(int d1, int d2)
                 else if (D[d1].B==3||D[d2].B==3)
                 {
 
-                    int d3=d2+1;
+//                    int d3=d2+1;
 
                     QList<int> disl_group;
                     for (int i=0;i<D.size();i++)
@@ -1261,6 +1261,7 @@ QList<int> Interaction::sort_list(QList<int> list)
 
 int Interaction::check_dipole_size(int d1, int d2, int multi)
 {
+    UNUSED(multi);
     double tolerance=fabs(2*D[d1].B1*1E10);
     QList<int> disl_list, sorted_disl_list;
     //   qDebug()<<D.size()<<d1<<d2;
@@ -1321,12 +1322,12 @@ int Interaction::check_dipole_size(int d1, int d2, int multi)
         x_count[x]=0;
     }
 
-    int h=0;
+//    int h=0;
     for (int i=0; i<disl_list.size(); i++)
     {
         int disl=disl_list.value(i);
         int c=fabs(D[disl].B1/basal_B);
-        h=c;
+//        h=c;
         //    qDebug()<<D[disl].B1<<D[disl].B1/basal_B<<"c="<<c;
         if (D[disl].B==4&&D[disl].xd<D[min_3].xd)
         {
@@ -1382,7 +1383,7 @@ int Interaction::check_dipole_size(int d1, int d2, int multi)
         totalx+=x_count[j];
 
     }
-    double average_x=totalx/double(size);
+//    double average_x=totalx/double(size);
 //    qDebug()<<d1<<d2<<min_3<<max_4;
 //    qDebug()<<countx<<tolerance;
     print_group_stats(disl_list);
@@ -1432,6 +1433,7 @@ int Interaction::check_dipole_size(int d1, int d2, int multi)
 
 void Interaction::print_group_stats(QList<int> disl_index)
 {
+    UNUSED(disl_index);
  /*   int i=disl_index[0];
     qDebug()<<"group:"<<D[i].group<<"iteration:"<<its<<"size"<<disl_index.size();
     for (int i=0; i<disl_index.size();i++)
@@ -1442,7 +1444,9 @@ void Interaction::print_group_stats(QList<int> disl_index)
 }
 
 void Interaction::print_group_stats(int g)
-{ /*
+{
+    UNUSED(g);
+    /*
     QList<int> list;
     list.clear();
     for (int i=0;i<D.size();i++)

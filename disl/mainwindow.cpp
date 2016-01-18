@@ -631,7 +631,7 @@ int MainWindow::run_main_program()
    //         for (int i=0;i<D.size();i++)
    //         {qDebug()<<i<<D[i].B<<D[i].B1<<D[i].by<<D[i].bx;}
 
-            bool ex=false;
+//            bool ex=false;
 
             if((cexpansion/(material_height/100))>max_cexp){
              //   if (fabs(cexpansion-max_cexp)/((max_cexp/(its-1)))>2.5){qDebug()<<its<<"c-expansion jump"<<max_cexp<<cexpansion<<(max_cexp/(its-1))<<cexpansion-max_cexp;ex=true;}

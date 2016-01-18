@@ -73,7 +73,7 @@ double Structure::random_inplane_a_y()
 
 void Structure::Random_position()
 {
-    bool position_ok=false;
+//    bool position_ok=false;
     sep = 80;// + rand()% int(20);
     // int plane = rand() % int( (y_max)/int_layer_sep );
 
@@ -277,6 +277,7 @@ void Structure::Add_new_pair()
 
 void Structure::prismatic_contraction(int d)
 {
+    UNUSED(d);
     double top=0;
     double bottom=0;
     double height=0;
@@ -724,6 +725,7 @@ void Structure::Add_material_height()
 
 void Structure::Add_material_height(double m)
 {
+    UNUSED(m);
  //   qDebug()<<"add material height function disabled"<<m<<m*basal_B;
     for (int i=0;i<120;i++)
     {
