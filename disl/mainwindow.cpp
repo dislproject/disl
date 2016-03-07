@@ -19,7 +19,6 @@
 #include <sys/time.h>
 
 
-
 using namespace std;
 using namespace Magick;
 
@@ -82,78 +81,84 @@ Strain_map MP;
 Grid grid[500][500];
 
 //setup signal and slots for GUI.
-MainWindow::MainWindow(QWidget *parent):QMainWindow(parent)//,ui(new Ui::MainWindow)
+MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)//,ui(new Ui::MainWindow)
 {
     ui.setupUi(this);
     connect(ui.reset_button, SIGNAL(clicked()), this, SLOT(resetValues()));
     connect(ui.run_button, SIGNAL(clicked()), this, SLOT(run_main_program()));
     connect(ui.replay_button, SIGNAL(clicked()), this, SLOT(animateImages()));
-    connect(ui.actionQuit, SIGNAL(triggered()),this, SLOT(quit()));
-    connect(ui.actionReadme, SIGNAL(triggered()),this, SLOT(showHelp()));
-    connect(ui.actionAbout, SIGNAL(triggered()),this, SLOT(showAbout()));
-    connect(ui.stop_button, SIGNAL(clicked()),this, SLOT(stopRun()));
-    connect(ui.continue_button, SIGNAL(clicked()),this, SLOT(continueRun()));
+    connect(ui.actionQuit, SIGNAL(triggered()), this, SLOT(quit()));
+    connect(ui.actionReadme, SIGNAL(triggered()), this, SLOT(showHelp()));
+    connect(ui.actionAbout, SIGNAL(triggered()), this, SLOT(showAbout()));
+    connect(ui.stop_button, SIGNAL(clicked()), this, SLOT(stopRun()));
+    connect(ui.continue_button, SIGNAL(clicked()), this, SLOT(continueRun()));
 }
 
 void MainWindow::stopRun()
 {
-stop=true;
+    stop = true;
 }
 
 void MainWindow::quit()
-{exit(0);}
+{
+    exit(0);
+}
 
 void MainWindow::showHelp()
-{system("gedit README.txt");}
+{
+    system("gedit README.txt");
+}
 
 void MainWindow::showAbout()
 {
-    QString title="About the Dislocation Program.";
+    QString title = "About the Dislocation Program.";
     QString text = "\n\n\n The dislocation program models the elastic strains of \n dislocations in graphite. \n\n \n A graphical representation of the bulk material is shown \n along with numerical values for the expansions \n and energies of the system due to the dislocations \n\n\n For more information refer to 'Help' \n \n \nVersion Date: 3rd October 2012 \n \n Authors \n G. Sheehan and P. Young";
     QMessageBox::about(this, title, text);
 }
 
 
-
 //function which is called when replay button is clicked
 void MainWindow::animateImages()
 //disable replay button and hide cexp, aexp and energy display labels
-{   ui.replay_button->setDisabled(true);
-//    ui.label_3->setHidden(true);
-//    ui.label_4->setHidden(true);
-//    ui.label_10->setHidden(true);
-//    ui.label_11->setHidden(true);
-//    ui.label_12->setHidden(true);
-//    ui.label_13->setHidden(true);
+{
+    ui.replay_button->setDisabled(true);
+    //ui.label_3->setHidden(true);
+    //ui.label_4->setHidden(true);
+    //ui.label_10->setHidden(true);
+    //ui.label_11->setHidden(true);
+    //ui.label_12->setHidden(true);
+    //ui.label_13->setHidden(true);
 
     char filename[64];
     char filename2[64];
     list<Magick::Image> imageList;
     list<Magick::Image> graphList;
-    for (int t=100; t<100+num_its; t++){
-        for(int f=0; f<=timesteps; f++){
-            if (timesteps*num_its<=1000)
+    for (int t = 100; t < 100 + num_its; t++)
+    {
+        for (int f = 0; f <= timesteps; f++)
+        {
+            if (timesteps * num_its <= 1000)
             {
                 snprintf(filename, sizeof(char) * 64, "Animate/images/bmp%d_%d.bmp", t, f);
             }
-            else if (timesteps*num_its>1000)
+            else if (timesteps * num_its > 1000)
             {
                 snprintf(filename, sizeof(char) * 64, "Animate/images/bmp%d.bmp", t);
             }
 
             readImages(&imageList, filename);
-            snprintf(filename2, sizeof(char) * 64, "Animate/images/graph%d.bmp",t);
+            snprintf(filename2, sizeof(char) * 64, "Animate/images/graph%d.bmp", t);
             //read image files into a list of images
 
             readImages(&graphList, filename2);
             // remove(filename);
             // remove(filename2);
             //QCoreApplication::processEvents(); //stop GUI being reported as unresponsive
-        }}
+        }
+    }
     //write images from list to animated gif
-    writeImages(imageList.begin(), imageList.end(), "Animate/animations/animation.gif", true );
-    writeImages(graphList.begin(), graphList.end(), "Animate/animations/graph.gif", true );
-
+    writeImages(imageList.begin(), imageList.end(), "Animate/animations/animation.gif", true);
+    writeImages(graphList.begin(), graphList.end(), "Animate/animations/graph.gif", true);
 
 
     //create Qmovie object to hold the animation, hide renderarea and show movie
@@ -161,8 +166,8 @@ void MainWindow::animateImages()
     graphanimation = new QMovie("Animate/animations/graph.gif");
     ui.graphicalRenderArea->close();
     ui.renderArea->close();
-//    ui.label_9->setMovie(animation);
-//    ui.label_14->setMovie(graphanimation);
+    //ui.label_9->setMovie(animation);
+    //ui.label_14->setMovie(graphanimation);
     //adjust speed of movie (percent of original speed)
     animation->setSpeed(30);
     animation->start();
@@ -195,10 +200,10 @@ void MainWindow::continueRun()
 
     ui.energy_checkBox->setChecked(false);
     ui.inplane_checkBox->setChecked(false);
-    e_calc=0;
-    basals=0;
-    a_calc=0;
-    inplane=0;
+    e_calc = 0;
+    basals = 0;
+    a_calc = 0;
+    inplane = 0;
 
     ui.comboBox_4->setDisabled(false);
 
@@ -217,13 +222,13 @@ void MainWindow::continueRun()
     ui.mapping_combobox->setDisabled(false);
     ui.s_xx->setDisabled(false);
     ui.s_xy->setDisabled(false);
-//    ui.s_xz->setDisabled(false);
+    //ui.s_xz->setDisabled(false);
     ui.s_yx->setDisabled(false);
     ui.s_yy->setDisabled(false);
-//    ui.s_yz->setDisabled(false);
-//    ui.s_zx->setDisabled(false);
-//    ui.s_zy->setDisabled(false);
-//    ui.s_zz->setDisabled(false);
+    //ui.s_yz->setDisabled(false);
+    //ui.s_zx->setDisabled(false);
+    //ui.s_zy->setDisabled(false);
+    //ui.s_zz->setDisabled(false);
     ui.inplane_checkBox->setDisabled(false);
 
 
@@ -252,7 +257,6 @@ void MainWindow::resetValues()
     ui.horizontalLayout_4->addWidget(ui.graphicalRenderArea);
 
 
-
     ui.disl_spinbox->setDisabled(false);
     ui.its_spinbox->setDisabled(false);
     ui.timesteps->setDisabled(false);
@@ -264,10 +268,10 @@ void MainWindow::resetValues()
 
     ui.energy_checkBox->setChecked(false);
     ui.inplane_checkBox->setChecked(false);
-    e_calc=0;
-    basals=0;
-    a_calc=0;
-    inplane=0;
+    e_calc = 0;
+    basals = 0;
+    a_calc = 0;
+    inplane = 0;
     // ui.comboBox->setDisabled(false);
     ui.comboBox_4->setDisabled(false);
     listOfAPoints.clear();
@@ -293,31 +297,30 @@ void MainWindow::resetValues()
     ui.mapping_combobox->setDisabled(false);
     ui.s_xx->setDisabled(false);
     ui.s_xy->setDisabled(false);
-  //  ui.s_xz->setDisabled(false);
+    //ui.s_xz->setDisabled(false);
     ui.s_yx->setDisabled(false);
     ui.s_yy->setDisabled(false);
- //   ui.s_yz->setDisabled(false);
- //   ui.s_zx->setDisabled(false);
- //   ui.s_zy->setDisabled(false);
- //   ui.s_zz->setDisabled(false);
+    //ui.s_yz->setDisabled(false);
+    //ui.s_zx->setDisabled(false);
+    //ui.s_zy->setDisabled(false);
+    //ui.s_zz->setDisabled(false);
     ui.inplane_checkBox->setDisabled(false);
 
     D.clear();
-    max_cexp=0;
-    max_area_change=0;
-
+    max_cexp = 0;
+    max_area_change = 0;
 
 
     //remove saved image files
-//    remove_Image_Files();
+    //remove_Image_Files();
 
 }
 
 //main program which is run when the Run button is clicked
 int MainWindow::run_main_program()
 {
-    stop=false;
-    int test_run=ui.test_combobox->currentIndex()+1;
+    stop = false;
+    int test_run = ui.test_combobox->currentIndex() + 1;
     //disable push buttons while program is running.
     ui.run_button->setDisabled(true);
     ui.reset_button->setDisabled(true);
@@ -325,37 +328,49 @@ int MainWindow::run_main_program()
     ui.stop_button->setDisabled(false);
     ui.continue_button->setDisabled(false);
     //read in values from input parameters and assign to external variables.
-    disl_num=ui.disl_spinbox->value();
-    initial_disl_num=ui.disl_spinbox->value();
-    num_its=ui.its_spinbox->value();
-    basal_B=ui.burgers_spinbox->value()*(1E-10);
-    inc=ui.inc_spinbox->value();
-    timesteps=ui.timesteps->value();
-    material_height=ui.height_spinbox->value();
-    material_width=ui.width_spinbox->value();
-    x_max=(material_width);
-    y_max=(material_height-40);
-    num_cells=ui.cells_spinbox->value();
-    if(ui.energy_checkBox->isChecked()){e_calc=1;}
-    if(ui.basals_checkBox->isChecked()){basals=1;}
-    if(ui.inplane_checkBox->isChecked()){inplane=1;}
-    S=1;//ui.comboBox->currentIndex()+1; //if 1 then circle, if 0 then square
-    T=ui.comboBox_4->currentIndex()+1; //if 0 then Anisotropic if 1 then Isotropic
+    disl_num = ui.disl_spinbox->value();
+    initial_disl_num = ui.disl_spinbox->value();
+    num_its = ui.its_spinbox->value();
+    basal_B = ui.burgers_spinbox->value() * (1E-10);
+    inc = ui.inc_spinbox->value();
+    timesteps = ui.timesteps->value();
+    material_height = ui.height_spinbox->value();
+    material_width = ui.width_spinbox->value();
+    x_max = (material_width);
+    y_max = (material_height - 40);
+    num_cells = ui.cells_spinbox->value();
+    if (ui.energy_checkBox->isChecked())
+    {
+        e_calc = 1;
+    }
+    if (ui.basals_checkBox->isChecked())
+    {
+        basals = 1;
+    }
+    if (ui.inplane_checkBox->isChecked())
+    {
+        inplane = 1;
+    }
+    S = 1 /*ui.comboBox->currentIndex()+1*/; //if 1 then circle, if 0 then square
+    T = ui.comboBox_4->currentIndex() + 1;   //if 0 then Anisotropic if 1 then Isotropic
     //call function to setup display boxes for energy if isotropic strain is selected.
-    if (e_calc==1){include_energy();}
+    if (e_calc == 1)
+    {
+        include_energy();
+    }
 
-    sxx=ui.s_xx->value();
-    sxy=ui.s_xy->value();
-    sxz=ui.s_xz->value();
-    syx=ui.s_yx->value();
-    syy=ui.s_yy->value();
-    syz=ui.s_yz->value();
-    szx=ui.s_zx->value();
-    szy=ui.s_zy->value();
-    szz=ui.s_zz->value();
+    sxx = ui.s_xx->value();
+    sxy = ui.s_xy->value();
+    sxz = ui.s_xz->value();
+    syx = ui.s_yx->value();
+    syy = ui.s_yy->value();
+    syz = ui.s_yz->value();
+    szx = ui.s_zx->value();
+    szy = ui.s_zy->value();
+    szz = ui.s_zz->value();
 
 
-    edge_segments=480;//4*157;
+    edge_segments = 480;//4*157;
     //disable spin boxes while program is running
     ui.disl_spinbox->setDisabled(true);
     ui.its_spinbox->setDisabled(true);
@@ -383,7 +398,6 @@ int MainWindow::run_main_program()
     ui.inplane_checkBox->setDisabled(true);
 
 
-
     Write write;  // to write info to file
 
 
@@ -391,27 +405,27 @@ int MainWindow::run_main_program()
 
     Structure A;// A: Class structure to build disl arrangements
     Force F;
-    max_energy=0.0;
+    max_energy = 0.0;
 
-    Kex=((pow(C11*C33,0.5)+C13)*(pow(C44*(pow(C11*C33,0.5))/(C33*(pow(C11*C33,0.5)+2*C44)),0.5)));
-    Key=((pow(C11*C33,0.5)+C13)*(pow(C44*(pow(C11*C33,0.5))/(C11*(pow(C11*C33,0.5)+2*C44)),0.5)));
-    A1=((pow(C11*C33,0.5))+C13)*(pow(((pow(C11*C33,0.5))-C13)/(C33*C44*((pow(C11*C33,0.5))+C13+(2*C44))),0.5));
-    A2=(pow(C11*C33,0.5))/C33;
-    A3=(((pow(C11*C33,0.5))+C13)*((pow(C11*C33,0.5))-C13+(2*C44)))/(C33*C44);
-    A4=(((pow(C11*C33,0.5))-C13)*((pow(C11*C33,0.5))+C13-(2*C44)))-((pow(C11*C33,0.5))*C44);
-    A5=C33*C44;
-    A6=2*M_PI*(pow(C11*C33,0.5));
-    A7=C44/(2*M_PI);
+    Kex = ((pow(C11 * C33, 0.5) + C13) * (pow(C44 * (pow(C11 * C33, 0.5)) / (C33 * (pow(C11 * C33, 0.5) + 2 * C44)), 0.5)));
+    Key = ((pow(C11 * C33, 0.5) + C13) * (pow(C44 * (pow(C11 * C33, 0.5)) / (C11 * (pow(C11 * C33, 0.5) + 2 * C44)), 0.5)));
+    A1 = ((pow(C11 * C33, 0.5)) + C13) * (pow(((pow(C11 * C33, 0.5)) - C13) / (C33 * C44 * ((pow(C11 * C33, 0.5)) + C13 + (2 * C44))), 0.5));
+    A2 = (pow(C11 * C33, 0.5)) / C33;
+    A3 = (((pow(C11 * C33, 0.5)) + C13) * ((pow(C11 * C33, 0.5)) - C13 + (2 * C44))) / (C33 * C44);
+    A4 = (((pow(C11 * C33, 0.5)) - C13) * ((pow(C11 * C33, 0.5)) + C13 - (2 * C44))) - ((pow(C11 * C33, 0.5)) * C44);
+    A5 = C33 * C44;
+    A6 = 2 * M_PI * (pow(C11 * C33, 0.5));
+    A7 = C44 / (2 * M_PI);
 
 
-    if (inplane==1)
+    if (inplane == 1)
     {
         A.Inplane_rounding();
-        int m=ui.mapping_combobox->currentIndex();
+        int m = ui.mapping_combobox->currentIndex();
         Inplane P;
-        int ret=P.run_inplane(m);
+        int ret = P.run_inplane(m);
 
-        for(int t=0;t<timesteps;t++)
+        for (int t = 0; t < timesteps; t++)
         {
             F.inplane_forces();
             MP.calculate_strainmap(m);
@@ -421,41 +435,56 @@ int MainWindow::run_main_program()
         //ui.renderArea->setShape(RenderArea::Pixmap);
         ui.reset_button->setDisabled(false);
         ui.replay_button->setDisabled(false);
-        if (ret==0){return 0;}
-        else{qDebug()<<"Something wrong, Inplane is not returning zero...";}
+        if (ret == 0)
+        {
+            return 0;
+        }
+        else
+        {
+            qDebug() << "Something wrong, Inplane is not returning zero...";
+        }
     }
 
     ////////////////////////////////////////////////////////////
     // array of dislocations
     // Disl x posns for plane of dipoles (1 of each dipole)
-    if (test_run==1){
-        if (!ui.randomise_checkBox->isChecked()){
+    if (test_run == 1)
+    {
+        if (!ui.randomise_checkBox->isChecked())
+        {
             double Dip_posn_x[disl_columns];
-            for(int l=0; l<disl_columns; l++){
-                Dip_posn_x[l]=90+(l*(x_max/disl_columns));}
+            for (int l = 0; l < disl_columns; l++)
+            {
+                Dip_posn_x[l] = 90 + (l * (x_max / disl_columns));
+            }
 
             // y posns for planes of dipoles
             double Dip_posn_y[disl_lays];
-            for(int l=0; l<disl_lays; l++){
-                Dip_posn_y[l]=l*(y_max/disl_lays);}
+            for (int l = 0; l < disl_lays; l++)
+            {
+                Dip_posn_y[l] = l * (y_max / disl_lays);
+            }
 
             A.Build_Di(Dip_posn_x, Dip_posn_y); // make disl posns
-            for (int k=0; k<(initial_disl_num); k++)
+            for (int k = 0; k < (initial_disl_num); k++)
             {
                 structure.Add_new_grid_pair();
             }
 
         }
-        else {
+        else
+        {
 
-            for (int j=0;j<edge_segments;j++)
-            {E_new[j].count=0;
-                E_new[j].counth=0;
-                E_new[j].x=E[j].x;
-                E_new[j].y=E[j].y;}
-            group_number=0;
-            dislocation_number=0;
-            for (int k=0; k<(initial_disl_num); k++)
+            for (int j = 0; j < edge_segments; j++)
+            {
+                E_new[j].count = 0;
+                E_new[j].counth = 0;
+                E_new[j].x = E[j].x;
+                E_new[j].y = E[j].y;
+            }
+            group_number = 0;
+            dislocation_number = 0;
+            for (int k = 0; k < (initial_disl_num); k++)
             {
                 structure.Add_new_pair();
                 interaction.check_new_interactions();
@@ -477,36 +506,47 @@ int MainWindow::run_main_program()
 
     //////////////////////Main Program///////////////////////////////////////////
 
-    for(its=0; its<=num_its; its++){
-   //     qDebug()<<"iteration:"<<its;
-        if (test_run==2)
+    for (its = 0; its <= num_its; its++)
+    {
+        //     qDebug()<<"iteration:"<<its;
+        if (test_run == 2)
         {
-            int done=test.line_test();
+            int done = test.line_test();
 
             interaction.check_all_interactions();
             structure.calculate_edge_strains();
             ui.renderArea->setShape(RenderArea::Pixmap);
             write.Expansion(); // calc expansion
             write.Area(); //calc area
-            if (e_calc==1){
-                En.Calc_energy();} //calc energy
+            if (e_calc == 1)
+            {
+                //calc energy
+                En.Calc_energy();
+            }
 
-            if((cexpansion/(material_height/100))>max_cexp){
-                max_cexp=cexpansion/(material_height/100);}
-            if(fabs(aexpansion/(material_width/100))>max_cexp){
-                max_cexp=fabs(aexpansion/(material_width/100));}
-            if(fabs(100-total_area)>max_area_change){
-                max_area_change=fabs(100-total_area);}
+            if ((cexpansion / (material_height / 100)) > max_cexp)
+            {
+                max_cexp = cexpansion / (material_height / 100);
+            }
+            if (fabs(aexpansion / (material_width / 100)) > max_cexp)
+            {
+                max_cexp = fabs(aexpansion / (material_width / 100));
+            }
+            if (fabs(100 - total_area) > max_area_change)
+            {
+                max_area_change = fabs(100 - total_area);
+            }
 
             ui.graphicalRenderArea->setShape(RenderArea::Graph);
             //display the expansions and energies in the display labels
             ui.label_17->setNum(cexpansion);
             ui.label_15->setNum(aexpansion);
-            if(e_calc==1){
-     //           ui.label_13->setNum(En.En);
+            if (e_calc == 1)
+            {
+                //ui.label_13->setNum(En.En);
             }
 
-            if (done==2)
+            if (done == 2)
             {
 
                 ui.reset_button->setDisabled(false);
@@ -515,46 +555,57 @@ int MainWindow::run_main_program()
                 return 0;
             }
         }
-        else if (test_run==3){
+        else if (test_run == 3)
+        {
             double clo;
-            int density=40;
+            int density = 40;
             test.convergence_test(density);
-            for (int j=1;j<num_its;j++)
+            for (int j = 1; j < num_its; j++)
             {
-                clo=clock();
-                num_cells=j;
-                its=j;
+                clo = clock();
+                num_cells = j;
+                its = j;
 
                 structure.calculate_edge_strains();
 
                 ui.renderArea->setShape(RenderArea::Pixmap);
                 write.Expansion(); // calc expansion
                 write.Area(); //calc area
-                if (e_calc==1){
-                    En.Calc_energy();} //calc energy
+                if (e_calc == 1)
+                {
+                    //calc energy
+                    En.Calc_energy();
+                }
 
-                if((cexpansion/(material_height/100))>max_cexp){
-                    max_cexp=cexpansion/(material_height/100);}
-                if(fabs(aexpansion/(material_width/100))>max_cexp){
-                    max_cexp=fabs(aexpansion/(material_width/100));}
-                if(fabs(100-total_area)>max_area_change){
-                    max_area_change=fabs(100-total_area);}
+                if ((cexpansion / (material_height / 100)) > max_cexp)
+                {
+                    max_cexp = cexpansion / (material_height / 100);
+                }
+                if (fabs(aexpansion / (material_width / 100)) > max_cexp)
+                {
+                    max_cexp = fabs(aexpansion / (material_width / 100));
+                }
+                if (fabs(100 - total_area) > max_area_change)
+                {
+                    max_area_change = fabs(100 - total_area);
+                }
 
                 ui.graphicalRenderArea->setShape(RenderArea::Graph);
                 //display the expansions and energies in the display labels
                 ui.label_17->setNum(cexpansion);
                 ui.label_15->setNum(aexpansion);
-                if(e_calc==1){
-    //                ui.label_13->setNum(En.En);
+                if (e_calc == 1)
+                {
+                    //ui.label_13->setNum(En.En);
                 }
 
-                double dif = double(clock()-clo)/1000000;
+                double dif = double(clock() - clo) / 1000000;
 
-                double lehto_oberg = density*10*basal_B*1E+10*80*100/(material_height*material_width);
-                double program = (cexpansion*100/material_height);
-                double agreement = program/lehto_oberg*100;
+                double lehto_oberg = density * 10 * basal_B * 1E+10 * 80 * 100 / (material_height * material_width);
+                double program = (cexpansion * 100 / material_height);
+                double agreement = program / lehto_oberg * 100;
 
-                qDebug()<<"number of  repeat cells: "<<num_cells<<"  agreement with Lehto-Oberg: "<<agreement<<"%"<<"Time:"<<dif<<"seconds  "<<cexpansion<<"  "<<En.En;
+                qDebug() << "number of  repeat cells: " << num_cells << "  agreement with Lehto-Oberg: " << agreement << "%" << "Time:" << dif << "seconds  " << cexpansion << "  " << En.En;
 
             }
             ui.reset_button->setDisabled(false);
@@ -563,116 +614,151 @@ int MainWindow::run_main_program()
 
         }
 
-        else if (test_run==4) //insert a test dislocation and move it across the material and map the energy profile.
+        else if (test_run == 4) //insert a test dislocation and move it across the material and map the energy profile.
         {
-  //          structure.Add_new_pair();
+            //structure.Add_new_pair();
             structure.Add_test_basal();
-            for(int ystep=1;ystep<(material_height/200);ystep++){
-             ui.renderArea->setShape(RenderArea::Pixmap);
-
-            int jmax=material_width;
-            num_its=jmax;
-            int pos=D.size()-1;
-            for (int j=0;j<jmax;j++)
+            for (int ystep = 1; ystep < (material_height / 200); ystep++)
             {
-                its=j;
-                En.Calc_energy_test();
-                F.move_pris();
-                ui.label_13->setNum(En.En);
-                D[pos].x+=1;
-                D[pos].xd+=1;
-                D[pos].f=0.0;
-                for(int i=0;i<D.size()-2;i++){
-                    for (int k=-num_cells;k<=num_cells;k++){
-                        D[pos].f+=F.calc_f_d1_d2(pos,i,D[i].xd+(k*300));
-                    }
-                }
-                qDebug()<<D[pos].f<<","<<D[pos].xd-300;
-
-                ui.graphicalRenderArea->setShape(RenderArea::Graph);
                 ui.renderArea->setShape(RenderArea::Pixmap);
+
+                int jmax = material_width;
+                num_its = jmax;
+                int pos = D.size() - 1;
+                for (int j = 0; j < jmax; j++)
+                {
+                    its = j;
+                    En.Calc_energy_test();
+                    F.move_pris();
+                    ui.label_13->setNum(En.En);
+                    D[pos].x += 1;
+                    D[pos].xd += 1;
+                    D[pos].f = 0.0;
+                    for (int i = 0; i < D.size() - 2; i++)
+                    {
+                        for (int k = -num_cells; k <= num_cells; k++)
+                        {
+                            D[pos].f += F.calc_f_d1_d2(pos, i, D[i].xd + (k * 300));
+                        }
+                    }
+                    qDebug() << D[pos].f << "," << D[pos].xd - 300;
+
+                    ui.graphicalRenderArea->setShape(RenderArea::Graph);
+                    ui.renderArea->setShape(RenderArea::Pixmap);
+                }
+                D[pos].y += 200;
+                D[pos].x -= material_width;
+                D[pos].xd -= material_width;
             }
-            D[pos].y+=200;
-            D[pos].x-=material_width;
-            D[pos].xd-=material_width;
-        }
             return 0;
         }
 
-        else if (test_run==1){
+        else if (test_run == 1)
+        {
 
-            force_iteration=0;
+            force_iteration = 0;
             structure.calculate_edge_strains();
-             ui.renderArea->setShape(RenderArea::Pixmap);
+            ui.renderArea->setShape(RenderArea::Pixmap);
 
-            for(int i=1; i<=timesteps; i++)
+            for (int i = 1; i <= timesteps; i++)
             {
-                if (checkStop()==true){return 0;}
-                force_iteration=i;
+                if (checkStop() == true)
+                {
+                    return 0;
+                }
+                force_iteration = i;
                 //calculate the force on each dislocation due to the others
-                if(group_number!=0){F.move_pris();}
+                if (group_number != 0)
+                {
+                    F.move_pris();
+                }
                 F.move_basals();
                 interaction.check_all_interactions();
                 interaction.check_for_ruckandtuck();
                 interaction.check_for_ruck_tuck_growth();
-          //      structure.calculate_edge_strains();  //very slow to recalculate after each time step but useful for debugging
-          // if(i==timesteps-1){      ui.renderArea->setShape(RenderArea::Pixmap);}
-          // if ((timesteps>100)&&(i%10==0)){ ui.renderArea->setShape(RenderArea::Pixmap);}
-            ui.renderArea->setShape(RenderArea::Pixmap);
+                // structure.calculate_edge_strains();  //very slow to recalculate after each time step but useful for debugging
+                // if (i == timesteps - 1)
+                // {
+                //     ui.renderArea->setShape(RenderArea::Pixmap);
+                // }
+                // if ((timesteps > 100) && (i % 10 == 0))
+                // {
+                //     ui.renderArea->setShape(RenderArea::Pixmap);
+                // }
+                ui.renderArea->setShape(RenderArea::Pixmap);
             }
             write.Expansion(); // calc expansion
             write.Area(); //calc area
-            if (e_calc==1){
-                En.Calc_energy();} //calc energy
+            if (e_calc == 1)
+            {
+                En.Calc_energy();
+            }                      //calc energy
 
+            //qDebug() << "";
+            //qDebug() << "New iteration -" << its;
+            //for (int i = 0; i < D.size(); i++)
+            //{
+            //    qDebug() << i << D[i].B << D[i].B1 << D[i].by << D[i].bx;
+            //}
 
-   //         qDebug()<<"";
-   //         qDebug()<<"New iteration -"<<its;
-   //         for (int i=0;i<D.size();i++)
-   //         {qDebug()<<i<<D[i].B<<D[i].B1<<D[i].by<<D[i].bx;}
+            //bool ex = false;
 
-//            bool ex=false;
-
-            if((cexpansion/(material_height/100))>max_cexp){
-             //   if (fabs(cexpansion-max_cexp)/((max_cexp/(its-1)))>2.5){qDebug()<<its<<"c-expansion jump"<<max_cexp<<cexpansion<<(max_cexp/(its-1))<<cexpansion-max_cexp;ex=true;}
-                max_cexp=cexpansion/(material_height/100);}
-            if(fabs(aexpansion/(material_width/100))>max_cexp){
-                max_cexp=fabs(aexpansion/(material_width/100));}
-            if(fabs(100-total_area)>max_area_change){
-                max_area_change=fabs(100-total_area);}
+            if ((cexpansion / (material_height / 100)) > max_cexp)
+            {
+                //if (fabs(cexpansion - max_cexp) / ((max_cexp / (its - 1))) > 2.5)
+                //{
+                //    qDebug() << its << "c-expansion jump" << max_cexp << cexpansion << (max_cexp / (its - 1)) << cexpansion - max_cexp;
+                //    ex = true;
+                //}
+                max_cexp = cexpansion / (material_height / 100);
+            }
+            if (fabs(aexpansion / (material_width / 100)) > max_cexp)
+            {
+                max_cexp = fabs(aexpansion / (material_width / 100));
+            }
+            if (fabs(100 - total_area) > max_area_change)
+            {
+                max_area_change = fabs(100 - total_area);
+            }
 
             ui.graphicalRenderArea->setShape(RenderArea::Graph);
             //display the expansions and energies in the display labels
             ui.label_17->setNum(cexpansion);
             ui.label_15->setNum(aexpansion);
 
-            if(e_calc==1){
+            if (e_calc == 1)
+            {
 
                 ui.label_13->setNum(En.En);
             }
 
-            qDebug()<<its<<"    "<<cexpansion<<"    "<<En.En;
-           // if (ex==true){exit(0);}
+            qDebug() << its << "    " << cexpansion << "    " << En.En;
+            //if (ex == true)
+            //{
+            //    exit(0);
+            //}
 
 
             //increase number of dislocations by one for each iteration
-            disl_num+=inc;
-            for (int d=1; d<=inc; d++)
-            {   if (!ui.randomise_checkBox->isChecked())
+            disl_num += inc;
+            for (int d = 1; d <= inc; d++)
+            {
+                if (!ui.randomise_checkBox->isChecked())
                 {
-                      structure.Add_new_grid_pair();
+                    structure.Add_new_grid_pair();
                 }
-                else{
+                else
+                {
                     structure.Add_new_pair();
-                   interaction.check_new_interactions();
-                   interaction.check_for_ruckandtuck();
-                   interaction.check_for_ruck_tuck_growth();
+                    interaction.check_new_interactions();
+                    interaction.check_for_ruckandtuck();
+                    interaction.check_for_ruck_tuck_growth();
 
                 }
 
             }
 
-   //         qDebug()<<"iteration"<<its<<"done";
+            //qDebug() << "iteration" << its << "done";
         }
 
     }
@@ -687,12 +773,11 @@ int MainWindow::run_main_program()
 
 
 void MainWindow::include_energy()
-//if isotropic strains are selected then display labels for Energy display.
 {
+//if isotropic strains are selected then display labels for Energy display.
     ui.label_12->setText(QApplication::translate("MainWindow", "Energy:", 0));
     ui.label_13->setText(QApplication::translate("MainWindow", "", 0));
 }
-
 
 
 //function to remove image files when the reset button is pressed
@@ -700,10 +785,12 @@ void MainWindow::remove_Image_Files()
 {
     char filename[64];
     char filename2[64];
-    for (int t=initial_disl_num; t<=(initial_disl_num+(inc*num_its)); (t+=inc)){
-        for(int f=0; f<=timesteps; f++){
+    for (int t = initial_disl_num; t <= (initial_disl_num + (inc * num_its)); (t += inc))
+    {
+        for (int f = 0; f <= timesteps; f++)
+        {
             snprintf(filename, sizeof(char) * 64, "Animate/images/bmp%d_%d.bmp", t, f);
-            snprintf(filename2, sizeof(char) * 64, "Animate/images/graph%d.bmp",t);
+            snprintf(filename2, sizeof(char) * 64, "Animate/images/graph%d.bmp", t);
             remove(filename);
             remove(filename2);
         }
@@ -711,29 +798,36 @@ void MainWindow::remove_Image_Files()
 }
 
 
-
 void MainWindow::netburg()
 {
-    double net_burg=0;
-    for (int d=0; d<D.size(); d++)
-    {net_burg+=D[d].B1;}
-    net_burg=fabs(net_burg);
-    if (net_burg>=1E-10)
+    double net_burg = 0;
+    for (int d = 0; d < D.size(); d++)
     {
-        qDebug()<<"burg mag not conserved"<<net_burg<<its+100<<"_"<<force_iteration;
-        qDebug()<<"exiting program";
-       // exit(0);
+        net_burg += D[d].B1;
     }
-    else {qDebug()<<"pass"<<its+100<<"_"<<force_iteration;}
+    net_burg = fabs(net_burg);
+    if (net_burg >= 1E-10)
+    {
+        qDebug() << "burg mag not conserved" << net_burg << its + 100 << "_" << force_iteration;
+        qDebug() << "exiting program";
+        // exit(0);
+    }
+    else
+    {
+        qDebug() << "pass" << its + 100 << "_" << force_iteration;
+    }
 }
 
 bool MainWindow::checkStop()
 {
-QCoreApplication::processEvents();
-if (stop==false){return false;}
-else
-{
-    ui.reset_button->setDisabled(false);
-    return true;
-}
+    QCoreApplication::processEvents();
+    if (stop == false)
+    {
+        return false;
+    }
+    else
+    {
+        ui.reset_button->setDisabled(false);
+        return true;
+    }
 }

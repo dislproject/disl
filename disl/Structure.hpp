@@ -1,7 +1,8 @@
-class Structure{
+class Structure
+{
 
 private:
-    int i,j;
+    int i, j;
 
 public:
 

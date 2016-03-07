@@ -1,5 +1,3 @@
-
-
 #ifndef RENDERAREA_H
 #define RENDERAREA_H
 #include "externVar.h"
@@ -29,7 +27,6 @@ public slots:
     void setPen(const QPen &pen);
     void setBrush(const QBrush &brush);
     void setAntialiased(bool antialiased);
-
 
 
 protected:

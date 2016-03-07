@@ -52,12 +52,11 @@ extern double szy;
 extern double szz;
 
 
-
-#include"Edge.hpp"
-#include"Disl.hpp"
-#include"Energy.hpp"
-#include"interaction.h"
-#include"test.hpp"
+#include "Edge.hpp"
+#include "Disl.hpp"
+#include "Energy.hpp"
+#include "interaction.h"
+#include "test.hpp"
 
 extern int basals;
 extern Edge E[];
@@ -67,7 +66,7 @@ extern double En_self;
 extern QList<Disl> D;
 extern QList<Disl> ImgD;
 
-#include"Structure.hpp"
+#include "Structure.hpp"
 extern Structure structure;
 extern Interaction interaction;
 extern Test test;
@@ -85,17 +84,17 @@ extern QList<double> listOfAYPos;
 extern QList<double> listOfAreaYPos;
 extern QList<double> listOfAreaXPos;
 
-#include"Force.hpp"
+#include "Force.hpp"
 
-#include"inplane.hpp"
+#include "inplane.hpp"
 extern Inplane P;
 extern int inplane_h_planes; //number of horizontal glide planes
 extern int inplane_a_planes; // number of angled glide planes
 
-#include"strain_map.hpp"
+#include "strain_map.hpp"
 extern Strain_map MP;
 
-#include"grid.hpp"
+#include "grid.hpp"
 extern Grid grid[][500];
 
 #endif // EXTERNVAR_H

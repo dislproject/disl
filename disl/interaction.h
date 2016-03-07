@@ -5,7 +5,7 @@
 class Interaction
 {
 
-typedef Eigen::Matrix<double,3,1> vectorDim;
+    typedef Eigen::Matrix<double, 3, 1> vectorDim;
 
 public:
     Interaction();
@@ -24,7 +24,7 @@ public:
     void check_for_cracks();
     void check_for_ruckandtuck();
     void climb_dislocation(int);
-    void deposit_material(int,int);
+    void deposit_material(int, int);
     void check_for_ruck_tuck_growth();
     int move_dislocation(int);
     double calc_netburg();
@@ -33,7 +33,7 @@ public:
     int check_dipole_size(int d1, int d2, int multi);
     void print_group_stats(QList<int> disl_index);
     void print_group_stats(int g);
-    void Re_group(int,int);
+    void Re_group(int, int);
     int restructure_group(int g);
     void Find_min(QList<int> sorted_list);
     QList<int> sort_list(QList<int> list);

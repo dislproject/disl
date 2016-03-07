@@ -335,65 +335,65 @@ compiler_rcc_make_all: qrc_mainwindow.cpp
 compiler_rcc_clean:
 	-$(DEL_FILE) qrc_mainwindow.cpp
 qrc_mainwindow.cpp: mainwindow.qrc \
+		Animate/T_up_img.png \
+		Animate/D13.png \
+		Animate/0.png \
+		Animate/-6.png \
+		Animate/-10.png \
+		Animate/DT_down.png \
+		Animate/9.png \
+		Animate/D12.png \
+		Animate/T_right.png \
+		Animate/area_point.png \
+		Animate/DT_right.png \
+		Animate/-5.png \
+		Animate/T_down_img.png \
+		Animate/c_point.png \
+		Animate/8.png \
+		Animate/D11.png \
+		Animate/E_right.png \
+		Animate/D9.png \
+		Animate/-4.png \
+		Animate/T_down.png \
+		Animate/TT_left.png \
+		Animate/7.png \
+		Animate/D10.png \
+		Animate/D8.png \
+		Animate/test_up.png \
+		Animate/-3.png \
+		Animate/6.png \
+		Animate/DT_left.png \
 		Animate/D7.png \
 		Animate/-2.png \
-		Animate/3.png \
-		Animate/D13.png \
-		Animate/D6.png \
-		Animate/-1.png \
-		Animate/E_right_o.png \
-		Animate/T_left_img.png \
-		Animate/-10.png \
-		Animate/e_point.png \
-		Animate/E_top.png \
-		Animate/2.png \
-		Animate/D12.png \
-		Animate/D5.png \
-		Animate/TT_up.png \
-		Animate/T_up.png \
-		Animate/1.png \
-		Animate/10.png \
-		Animate/T_down.png \
-		Animate/-9.png \
-		Animate/D11.png \
-		Animate/a_point.png \
-		Animate/DT_up.png \
-		Animate/area_point.png \
-		Animate/0.png \
-		Animate/T_down_img.png \
-		Animate/-8.png \
-		Animate/D10.png \
-		Animate/9.png \
-		Animate/TT_down.png \
-		Animate/-7.png \
-		Animate/8.png \
-		Animate/DT_down.png \
-		Animate/E_top_o.png \
-		Animate/-6.png \
-		Animate/7.png \
-		Animate/T_left.png \
-		Animate/T_right.png \
-		Animate/T_up_img.png \
-		Animate/-5.png \
-		Animate/c_point.png \
-		Animate/6.png \
-		Animate/E_right.png \
-		Animate/D16.png \
-		Animate/D9.png \
-		Animate/TT_right.png \
-		Animate/-4.png \
-		Animate/TT_left.png \
 		Animate/5.png \
-		Animate/DT_right.png \
-		Animate/D15.png \
-		Animate/test_down.png \
-		Animate/test_up.png \
-		Animate/D8.png \
-		Animate/-3.png \
-		Animate/T_right_img.png \
+		Animate/D6.png \
+		Animate/E_top_o.png \
+		Animate/-1.png \
+		Animate/TT_right.png \
+		Animate/e_point.png \
 		Animate/4.png \
+		Animate/T_left.png \
+		Animate/D5.png \
+		Animate/D16.png \
+		Animate/test_down.png \
+		Animate/3.png \
+		Animate/10.png \
+		Animate/-9.png \
+		Animate/E_top.png \
+		Animate/a_point.png \
+		Animate/D15.png \
+		Animate/T_up.png \
+		Animate/2.png \
+		Animate/-8.png \
+		Animate/TT_up.png \
 		Animate/D14.png \
-		Animate/DT_left.png
+		Animate/TT_down.png \
+		Animate/T_right_img.png \
+		Animate/1.png \
+		Animate/DT_up.png \
+		Animate/T_left_img.png \
+		Animate/-7.png \
+		Animate/E_right_o.png
 	/usr/lib/x86_64-linux-gnu/qt5/bin/rcc -name mainwindow mainwindow.qrc -o qrc_mainwindow.cpp
 
 compiler_moc_header_make_all: moc_mainwindow.cpp moc_renderarea.cpp

@@ -1,31 +1,32 @@
 
 
-class Energy {
+class Energy
+{
 
-typedef Eigen::Matrix<double,3,1> vectorDim;
+    typedef Eigen::Matrix<double, 3, 1> vectorDim;
 
 private:
 
-  double R; // separation between dislocations
+    double R; // separation between dislocations
 
-public: 
+public:
 
-  double En; // energy
-  double res; // result out
+    double En; // energy
+    double res; // result out
 
-  Energy();
+    Energy();
 
-  // isotropic energy
-  double Iso_en(int, int, double);
+    // isotropic energy
+    double Iso_en(int, int, double);
 
-  // Self energy
-  double Iso_self_en(int);
+    // Self energy
+    double Iso_self_en(int);
 
 
-  void Calc_energy();
-  void Calc_energy_test();
+    void Calc_energy();
+    void Calc_energy_test();
 
-  double Ma_Iso_en(int d1, int d2, double x);
+    double Ma_Iso_en(int d1, int d2, double x);
 
 
 };

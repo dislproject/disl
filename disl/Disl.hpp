@@ -1,11 +1,11 @@
 #ifndef Ra // en calc from Ra(outer limit) to R (disl pos)
 #define Ra 1E-4
-#endif 
+#endif
 #ifndef Rc // Core radius
 #define Rc 3.32E-10
 #endif
 #ifndef mu
-#define mu 1. 
+#define mu 1.
 #endif
 //#ifndef x_max // x limit of area for disls
 //#define x_max 1190.
@@ -58,87 +58,88 @@
 #endif
 //#define disl_lays 8 // # of disl layers of dipoles
 // #define layers
-/*#ifndef A1
-#define A1 14.1539081
-#endif
-#ifndef A2
-#define A2 5.388979114//(C11*C33)^0.5/C33
-#endif
-#ifndef A3
-#define A3 198.98//200
-#endif
-#ifndef A4
-#define A4 3.966165E22//39500
-#endif
-#ifndef A5
-#define A5 1.84325E20//183
-#endif
-#ifndef A6
-#define A6 1.237787506E12//1240
-#endif
-#ifndef A7
-#define A7 803732462//0.798
-#endif
-*/
+/*
+   #ifndef A1
+   #define A1 14.1539081
+   #endif
+   #ifndef A2
+   #define A2 5.388979114//(C11*C33)^0.5/C33
+   #endif
+   #ifndef A3
+   #define A3 198.98//200
+   #endif
+   #ifndef A4
+   #define A4 3.966165E22//39500
+   #endif
+   #ifndef A5
+   #define A5 1.84325E20//183
+   #endif
+   #ifndef A6
+   #define A6 1.237787506E12//1240
+   #endif
+   #ifndef A7
+   #define A7 803732462//0.798
+   #endif
+ */
 
 class Edge;
 
-class Disl {
+class Disl
+{
 
 private:
-  int i;
+    int i;
 
 public:
 
-  ////// Parameters //////
+    ////// Parameters //////
 
-  // Dislocation properties
-  // current posns and previous posns
-  double x, y, xd;
-  int B;
-  // 1=up,2=down,3=left,4=right,
-  // for in plane 5=AC30_1, 6=AC30_2, 7=AC90_1, 8=AC90_2, 9=AC150_1, 10=AC150_2,
-  //              11=ZZ0_1, 12=ZZ0_2, 13=ZZ60_1, 14=ZZ60_2, 15=ZZ120_1, 16=ZZ120_2.
-  //
+    // Dislocation properties
+    // current posns and previous posns
+    double x, y, xd;
+    int B;
+    // 1=up,2=down,3=left,4=right,
+    // for in plane 5=AC30_1, 6=AC30_2, 7=AC90_1, 8=AC90_2, 9=AC150_1, 10=AC150_2,
+    //              11=ZZ0_1, 12=ZZ0_2, 13=ZZ60_1, 14=ZZ60_2, 15=ZZ120_1, 16=ZZ120_2.
+    //
 
 
+    double B1; // magnitude of B
+    double bx, by;
+    double f, df, fx, fy;
+    bool re_run;
+    bool crack;
+    bool fixed;
+    int group;
+    bool flagged;
+    int number;
+    bool min;
 
-  double B1; // magnitude of B
-  double bx, by;
-  double f, df, fx, fy;
-  bool re_run;
-  bool crack;
-  bool fixed;
-  int group;
-  bool flagged;
-  int number;
-  bool min;
+    // properties of edge of crystal
+    //double ux, uy; // displacement vector entries for edge
 
-  // properties of edge of crystal
-  //double ux, uy; // displacement vector entries for edge
+    // Forces
+    // double Fx; // x-Force between dislocations
 
-  // Forces
- // double Fx; // x-Force between dislocations
+    // number of plane. for adding half plane at edge
+    //int plane;
+    // edge positions relative to dislocation glide plane
+    // int edge1, edge2;
 
-  // number of plane. for adding half plane at edge
-  //int plane;
-  // edge positions relative to dislocation glide plane
- // int edge1, edge2;
+    ////// Functions //////
+    Disl(); // Constructor (make random dipole posns)
+    //void setConstants(int, int, double, int, int);
 
-  ////// Functions //////
-  Disl(); // Constructor (make random dipole posns)
-  //void setConstants(int, int, double, int, int);
+    // values for dipole pair of disl up to disl_num-1
+    void Dipole_pair(int&, int&, double&, double&, int&);
+    double Calc_Fx(double&, double&, double&); // calc x-force wrt other disls
+    void Move(double&);
+    void Check(int&, int&, Disl D[], Edge E[]);
+    void Edge_strain();
 
-  // values for dipole pair of disl up to disl_num-1
-  void Dipole_pair( int&, int&, double&, double&, int& );
-  double Calc_Fx( double&, double&, double& ); // calc x-force wrt other disls
-  void Move( double& );
-  void Check( int&, int&, Disl D[], Edge E[] );
-  void Edge_strain();
+    void Echo(int&, double&); // print to screen for testing
+    void Echo(int&); // final print to screen for testing
 
-  void Echo( int&, double& ); // print to screen for testing 
-  void Echo( int& ); // final print to screen for testing 
-  
-  friend class Edge;
+    friend class Edge;
 
 };

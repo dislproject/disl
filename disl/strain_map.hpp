@@ -2,7 +2,7 @@
 #define STRAIN_MAP_HPP
 
 class Strain_map
-{    
+{
 
 public:
     Strain_map();
