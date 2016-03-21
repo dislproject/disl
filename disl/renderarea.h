@@ -1,10 +1,7 @@
 #ifndef RENDERAREA_H
 #define RENDERAREA_H
+
 #include "externVar.h"
-#include <QBrush>
-#include <QPen>
-#include <QPixmap>
-#include <QWidget>
 
 //! [0]
 class RenderArea : public QWidget
@@ -110,4 +107,4 @@ private:
 };
 //! [0]
 
-#endif
+#endif // RENDERAREA_H

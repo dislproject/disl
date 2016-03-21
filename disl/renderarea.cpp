@@ -1,8 +1,7 @@
-#include <QtWidgets>
-#include <QDebug>
-#include <ImageMagick/Magick++.h>
 #include "externVar.h"
-#include "renderarea.h"
+
+#include <ImageMagick/Magick++.h>
+
 #include <string>
 #include <fstream>
 #include <iostream>
@@ -11,6 +10,9 @@
 #include <sstream>
 #include <list>
 #include <time.h>
+
+#include "renderarea.h"
+
 using namespace std;
 using namespace Magick;
 
@@ -111,6 +113,7 @@ QSize RenderArea::minimumSizeHint() const
 {
     return QSize(400, 600);
 }
+
 //default size of render area
 QSize RenderArea::sizeHint() const
 {
@@ -174,7 +177,6 @@ void RenderArea::paintEvent(QPaintEvent * /* event */)
     case Graph:
         plotGraph();
         break;
-
     }
 
 
@@ -184,48 +186,82 @@ void RenderArea::plotGraph()
 {
     QImage image(750, 800, QImage::Format_RGB32);
     image.fill(QColor(Qt::white).rgb()); //white background (default is black)
+
     QPainter graphpainter(this);
     QPainter graphpainter2;
+
+    // create a struct holding both QPainters
+    // so that all identical calls which paint into both can be made into one call
+    struct QPainterPair
+    {
+        QPainter *pgraphpainter, *pgraphpainter2;
+
+        QPainterPair(QPainter &graphpainter, QPainter &graphpainter2)
+        {
+            this->pgraphpainter = &graphpainter;
+            this->pgraphpainter2 = &graphpainter2;
+        }
+
+        void drawPixmap(const QPoint &p, const QPixmap &pm)
+        {
+            pgraphpainter->drawPixmap(p, pm);
+            pgraphpainter2->drawPixmap(p, pm);
+        }
+
+        void drawPixmap(int x, int y, const QPixmap &pm)
+        {
+            pgraphpainter->drawPixmap(x, y, pm);
+            pgraphpainter2->drawPixmap(x, y, pm);
+        }
+
+        void drawPixmap(int x, int y, int w, int h, const QPixmap &pm)
+        {
+            pgraphpainter->drawPixmap(x, y, w, h, pm);
+            pgraphpainter2->drawPixmap(x, y, w, h, pm);
+        }
+
+        void drawText(int x, int y, const QString &s)
+        {
+            pgraphpainter->drawText(x, y, s);
+            pgraphpainter2->drawText(x, y, s);
+        }
+    };
+    QPainterPair graphpainterpair(graphpainter, graphpainter2);
+
     graphpainter2.begin(&image);
+
     for (int xaxis = 60; xaxis < 570; xaxis++)
     {
-        graphpainter.drawPixmap(xaxis, 316, pixmapT);
-        graphpainter2.drawPixmap(xaxis, 316, pixmapT);
+        graphpainterpair.drawPixmap(xaxis, 316, pixmapT);
     }
     for (int yaxis = 60; yaxis < 600; yaxis++)
     {
-        graphpainter.drawPixmap(106, yaxis, pixmapR);
-        graphpainter2.drawPixmap(106, yaxis, pixmapR);
+        graphpainterpair.drawPixmap(106, yaxis, pixmapR);
         if (e_calc == 1 || a_calc == 1)
         {
-            graphpainter.drawPixmap(556, yaxis, pixmapR);
-            graphpainter2.drawPixmap(556, yaxis, pixmapR);
+            graphpainterpair.drawPixmap(556, yaxis, pixmapR);
         }
 
     }
 
     graphpainter.drawText(400, 316, "Iteration Number");
-    graphpainter.drawText(60, 40, "Expansion (%)");
     graphpainter2.drawText(380, 316, "Iteration Number");
+    graphpainter.drawText(60, 40, "Expansion (%)");
     graphpainter2.drawText(40, 40, "Expansion (%)");
     graphpainter.drawText(50, 700, "Number of Dislocations            Density                                   disl/cm2");
     graphpainter2.drawText(50, 700, "Number of Dislocations");
-    graphpainter.drawText(50, 660, "Sum of Burgers Vector Magnitudes");
-    graphpainter2.drawText(50, 660, "Sum of Burgers Vector Magnitudes");
-    graphpainter.drawText(50, 620, "Net Burgers Vector");
-    graphpainter2.drawText(50, 620, "Net Burgers Vector");
-    graphpainter.drawText(50, 740, "Area");
-    graphpainter2.drawText(50, 740, "Area");
+
+    graphpainterpair.drawText(50, 660, "Sum of Burgers Vector Magnitudes");
+    graphpainterpair.drawText(50, 620, "Net Burgers Vector");
+    graphpainterpair.drawText(50, 740, "Area");
 
     if (e_calc == 1)
     {
-        graphpainter.drawText(580, 40, "Energy (J/m^3)");
-        graphpainter2.drawText(580, 40, "Energy (J/m^3)");
+        graphpainterpair.drawText(580, 40, "Energy (J/m^3)");
     }
     if (a_calc == 1)
     {
-        graphpainter.drawText(580, 595, "Area Change (%)");
-        graphpainter2.drawText(580, 595, "Area Change (%)");
+        graphpainterpair.drawText(580, 595, "Area Change (%)");
     }
 
 
@@ -236,13 +272,11 @@ void RenderArea::plotGraph()
     }
     QString net;
     net.append(QString("%1").arg(net_burg));
-    graphpainter.drawText(220, 620, net);
-    graphpainter2.drawText(220, 620, net);
+    graphpainterpair.drawText(220, 620, net);
 
     QString dis;
     dis.append(QString("%1").arg(D.size()));
-    graphpainter.drawText(220, 700, dis);
-    graphpainter2.drawText(220, 700, dis);
+    graphpainterpair.drawText(220, 700, dis);
 
     QString density;
     density.append(QString("%1").arg(D.size() / (material_height * 1E-8 * material_width * 1E-8), 0, 'G', 4));
@@ -251,8 +285,7 @@ void RenderArea::plotGraph()
     QString area;
     area.append(QString("%1").arg(int(total_area)));
     area.append(QString("%1").arg("%"));
-    graphpainter.drawText(220, 740, area);
-    graphpainter2.drawText(220, 740, area);
+    graphpainterpair.drawText(220, 740, area);
 
     QString burg_sum;
     burg_sum.clear();
@@ -260,50 +293,34 @@ void RenderArea::plotGraph()
     double burg_mag;
     for (int d = 0; d < D.size(); d++)
     {
-        if (D[d].B1 < 0)
-        {
-            burg_mag = ((-1) * D[d].B1);
-        }
-        else
-        {
-            burg_mag = D[d].B1;
-        }
+        burg_mag = (D[d].B1 < 0) ? -D[d].B1 : D[d].B1;
         burg_tot += burg_mag;
-
     }
 
 
     burg_sum.append(QString("%1").arg(burg_tot));
-    graphpainter.drawText(280, 660, burg_sum);
-    graphpainter2.drawText(280, 660, burg_sum);
+    graphpainterpair.drawText(280, 660, burg_sum);
 
 
     //axis labelling
     for (int a = 1; a <= 5; a++)
     {
-        graphpainter.drawPixmap(104 + (a * (450 / 5)), 315, 18, 20, pixmapR);
-        graphpainter2.drawPixmap(104 + (a * (450 / 5)), 315, 18, 20, pixmapR);
+        graphpainterpair.drawPixmap(104 + (a * (450 / 5)), 315, 18, 20, pixmapR);
         QString x_label;
         x_label.append(QString("%1").arg(a * (num_its + 1) / 5));
-        graphpainter.drawText(100 + (a * (450 / 5)), 340, x_label);
-        graphpainter2.drawText(100 + (a * (450 / 5)), 340, x_label);
+        graphpainterpair.drawText(100 + (a * (450 / 5)), 340, x_label);
 
-        graphpainter.drawPixmap(100, 315 - (a * 250 / 5), 20, 18, pixmapT);
-        graphpainter2.drawPixmap(100, 315 - (a * 250 / 5), 20, 18, pixmapT);
+        graphpainterpair.drawPixmap(100, 315 - (a * 250 / 5), 20, 18, pixmapT);
         QString y_label;
         y_label.append(QString("%1").arg(a * (max_cexp / 5), 0, 'f', 1));
-        graphpainter.drawText(60, 320 - (a * 250 / 5), y_label);
-        graphpainter2.drawText(60, 320 - (a * 250 / 5), y_label);
+        graphpainterpair.drawText(60, 320 - (a * 250 / 5), y_label);
     }
     for (int a = -5; a < 0; a++)
     {
         QString y_label;
         y_label.append(QString("%1").arg(a * (max_cexp / 5), 0, 'f', 1));
-        graphpainter.drawText(60, 320 - (a * 250 / 5), y_label);
-        graphpainter2.drawText(60, 320 - (a * 250 / 5), y_label);
-        graphpainter.drawPixmap(100, 315 - (a * 250 / 5), 20, 18, pixmapT);
-        graphpainter2.drawPixmap(100, 315 - (a * 250 / 5), 20, 18, pixmapT);
-
+        graphpainterpair.drawText(60, 320 - (a * 250 / 5), y_label);
+        graphpainterpair.drawPixmap(100, 315 - (a * 250 / 5), 20, 18, pixmapT);
     }
 
     //axis scaling
@@ -337,13 +354,11 @@ void RenderArea::plotGraph()
     {
         for (int a = 1; a <= 5; a++)
         {
-            graphpainter.drawPixmap(555, 314 - (a * (250 / 5)), 20, 18, pixmapT);
-            graphpainter2.drawPixmap(555, 314 - (a * (250 / 5)), 20, 18, pixmapT);
+            graphpainterpair.drawPixmap(555, 314 - (a * (250 / 5)), 20, 18, pixmapT);
 
             QString e_label;
             e_label.append(QString("%1").arg(a * (max_energy / 5), 0, 'G', 3));
-            graphpainter.drawText(570, 320 - (a * 250 / 5), e_label);
-            graphpainter2.drawText(570, 320 - (a * 250 / 5), e_label);
+            graphpainterpair.drawText(570, 320 - (a * 250 / 5), e_label);
         }
 
         double energy_y = (En.En);
@@ -361,9 +376,9 @@ void RenderArea::plotGraph()
             scaledEPoints << scaledE;
         }
 
-        foreach(const QPoint &epoint, scaledEPoints){
-            graphpainter.drawPixmap(epoint, pixmapE);
-            graphpainter2.drawPixmap(epoint, pixmapE);
+        foreach (const QPoint &epoint, scaledEPoints)
+        {
+            graphpainterpair.drawPixmap(epoint, pixmapE);
         }
     }
 
@@ -372,14 +387,11 @@ void RenderArea::plotGraph()
     {
         for (int a = -5; a < 0; a++)
         {
-            graphpainter.drawPixmap(555, 314 - (a * (250 / 5)), 20, 18, pixmapT);
-            graphpainter2.drawPixmap(555, 314 - (a * (250 / 5)), 20, 18, pixmapT);
+            graphpainterpair.drawPixmap(555, 314 - (a * (250 / 5)), 20, 18, pixmapT);
 
             QString a_label;
             a_label.append(QString("%1").arg(a * (max_area_change / 5), 0, 'f', 1));
-            graphpainter.drawText(570, 320 - (a * 250 / 5), a_label);
-            graphpainter2.drawText(570, 320 - (a * 250 / 5), a_label);
-
+            graphpainterpair.drawText(570, 320 - (a * 250 / 5), a_label);
         }
         double area_y = (100 - total_area);
         double area_x = 105 + double(x_axis_factor * its);
@@ -395,44 +407,33 @@ void RenderArea::plotGraph()
             scaledA.setY(315. + (area_axis_factor * listOfAreaYPos.value(s)));
             scaledAPoints << scaledA;
         }
-        foreach(const QPoint &areapoint, scaledAPoints){
-            graphpainter.drawPixmap(areapoint, pixmapArea);
-            graphpainter2.drawPixmap(areapoint, pixmapArea);
+        foreach (const QPoint &areapoint, scaledAPoints)
+        {
+            graphpainterpair.drawPixmap(areapoint, pixmapArea);
         }
     }
 
-    foreach(const QPoint &cpoint, scaledCPoints){
-        graphpainter.drawPixmap(cpoint, pixmapC);
-        graphpainter2.drawPixmap(cpoint, pixmapC);
+    foreach (const QPoint &cpoint, scaledCPoints)
+    {
+        graphpainterpair.drawPixmap(cpoint, pixmapC);
     }
 
-    foreach(const QPoint &apoint, listOfAPoints){
-        graphpainter.drawPixmap(apoint, pixmapA);
-        graphpainter2.drawPixmap(apoint, pixmapA);
+    foreach (const QPoint &apoint, listOfAPoints)
+    {
+        graphpainterpair.drawPixmap(apoint, pixmapA);
     }
 
 
     //draw a legend
-    graphpainter.drawPixmap(480, 500, pixmapC);
-    graphpainter.drawPixmap(480, 520, pixmapA);
+    graphpainterpair.drawPixmap(480, 500, pixmapC);
+    graphpainterpair.drawPixmap(480, 520, pixmapA);
     if (e_calc == 1)
     {
-        graphpainter.drawPixmap(480, 540, pixmapE);
-        graphpainter.drawText(500, 550, "Energy");
+        graphpainterpair.drawPixmap(480, 540, pixmapE);
+        graphpainterpair.drawText(500, 550, "Energy");
     }
-    graphpainter.drawText(500, 510, "C axis");
-    graphpainter.drawText(500, 530, "A axis");
-
-
-    graphpainter2.drawPixmap(480, 500, pixmapC);
-    graphpainter2.drawPixmap(480, 520, pixmapA);
-    if (e_calc == 1)
-    {
-        graphpainter2.drawPixmap(480, 540, pixmapE);
-        graphpainter2.drawText(500, 550, "Energy");
-    }
-    graphpainter2.drawText(500, 510, "C axis");
-    graphpainter2.drawText(500, 530, "A axis");
+    graphpainterpair.drawText(500, 510, "C axis");
+    graphpainterpair.drawText(500, 530, "A axis");
 
 
     graphpainter2.end();
@@ -440,8 +441,6 @@ void RenderArea::plotGraph()
     char imagename[64];
     snprintf(imagename, sizeof(char) * 64, "Animate/images/graph%d.bmp", (100 + its)); //create filename for image
     image.save(imagename, 0, -1); //save image
-
-
 }
 
 void RenderArea::plotPixmaps()
@@ -449,8 +448,41 @@ void RenderArea::plotPixmaps()
     //set up image to write to for saving bmps (image size 700x800pix)
     QImage image(650, 800, QImage::Format_RGB32);
     image.fill(QColor(Qt::white).rgb()); //white background (default is black)
+
     QPainter painter(this);
     QPainter painter2;
+
+    // create a struct holding both QPainters
+    // so that all identical calls which paint into both can be made into one call
+    struct QPainterPair
+    {
+        QPainter *ppainter, *ppainter2;
+
+        QPainterPair(QPainter &painter, QPainter &painter2)
+        {
+            this->ppainter = &painter;
+            this->ppainter2 = &painter2;
+        }
+
+        void drawPixmap(int x, int y, const QPixmap &pm)
+        {
+            ppainter->drawPixmap(x, y, pm);
+            ppainter2->drawPixmap(x, y, pm);
+        }
+
+        void drawPixmap(int x, int y, int w, int h, const QPixmap &pm)
+        {
+            ppainter->drawPixmap(x, y, w, h, pm);
+            ppainter2->drawPixmap(x, y, w, h, pm);
+        }
+
+        void drawText(int x, int y, const QString &s)
+        {
+            ppainter->drawText(x, y, s);
+            ppainter2->drawText(x, y, s);
+        }
+    };
+    QPainterPair painterpair(painter, painter2);
 
     painter2.begin(&image);//start painting to Qimage
 
@@ -468,8 +500,6 @@ void RenderArea::plotPixmaps()
 
         offset_factor = (0.5 / (material_height / 1680)) * (0.625 / factor);
     }
-
-
     else if (material_width > material_height)
     {
         factor = width() / ((material_width / 1800) * 2400.);
@@ -485,29 +515,29 @@ void RenderArea::plotPixmaps()
 
     for (int i = 0; i < edge_segments; i++)
     {
+        int xCoord = 100 * offset_factor + ((E_new[i].x - 305) * factor);
+        int yCoord = 140 * offset_factor + ((E_new[i].y - 125) * factor);
         if (E_new[i].type == 5 && E_new[i].alive == true)
         {
-            painter.drawPixmap(100 * offset_factor + ((E_new[i].x - 305) * factor), 140 * offset_factor + ((E_new[i].y - 125) * factor), pixmapT);
-            painter2.drawPixmap(100 * offset_factor + ((E_new[i].x - 305) * factor), 140 * offset_factor + ((E_new[i].y - 125) * factor), pixmapT);
+            painterpair.drawPixmap(xCoord, yCoord, pixmapT);
         }
         if (E_new[i].type == 6 && E_new[i].alive == true)
         {
-            painter.drawPixmap(100 * offset_factor + ((E_new[i].x - 305) * factor), 140 * offset_factor + ((E_new[i].y - 125) * factor), pixmapR);
-            painter2.drawPixmap(100 * offset_factor + ((E_new[i].x - 305) * factor), 140 * offset_factor + ((E_new[i].y - 125) * factor), pixmapR);
+            painterpair.drawPixmap(xCoord, yCoord, pixmapR);
         }
     }
     //plot old edge positions and draw to image using red icons.
     for (int i = 0; i < edge_segments; i++)
     {
+        int xCoord = 100 * offset_factor + ((E[i].x - 305) * factor);
+        int yCoord = 140 * offset_factor + ((E[i].y - 125) * factor);
         if (E[i].type == 5)
         {
-            painter.drawPixmap(100 * offset_factor + ((E[i].x - 305) * factor), 140 * offset_factor + ((E[i].y - 125) * factor), pixmapOT);
-            painter2.drawPixmap(100 * offset_factor + ((E[i].x - 305) * factor), 140 * offset_factor + ((E[i].y - 125) * factor), pixmapOT);
+            painterpair.drawPixmap(xCoord, yCoord, pixmapOT);
         }
         if (E[i].type == 6)
         {
-            painter.drawPixmap(100 * offset_factor + ((E[i].x - 305) * factor), 140 * offset_factor + ((E[i].y - 125) * factor), pixmapOR);
-            painter2.drawPixmap(100 * offset_factor + ((E[i].x - 305) * factor), 140 * offset_factor + ((E[i].y - 125) * factor), pixmapOR);
+            painterpair.drawPixmap(xCoord, yCoord, pixmapOR);
         }
     }
 
@@ -515,111 +545,35 @@ void RenderArea::plotPixmaps()
     {
         for (int j = 0; j < 500; j++)
         {
-            if (grid[i][j].colour == -1)
+            int xCoord = 100 * offset_factor + ((grid[i][j].x - 305) * factor);
+            int yCoord = 140 * offset_factor + ((grid[i][j].y - 125) * factor);
+            const QPixmap *ppixmap = NULL;
+            switch (grid[i][j].colour)
             {
-                painter.drawPixmap(100 * offset_factor + ((grid[i][j].x - 305) * factor), 140 * offset_factor + ((grid[i][j].y - 125) * factor), pixmap_1);
-                painter2.drawPixmap(100 * offset_factor + ((grid[i][j].x - 305) * factor), 140 * offset_factor + ((grid[i][j].y - 125) * factor), pixmap_1);
+            case -1: ppixmap = &pixmap_1; break;
+            case -2: ppixmap = &pixmap_2; break;
+            case -3: ppixmap = &pixmap_3; break;
+            case -4: ppixmap = &pixmap_4; break;
+            case -5: ppixmap = &pixmap_5; break;
+            case -6: ppixmap = &pixmap_6; break;
+            case -7: ppixmap = &pixmap_7; break;
+            case -8: ppixmap = &pixmap_8; break;
+            case -9: ppixmap = &pixmap_9; break;
+            case -10: ppixmap = &pixmap_10; break;
+            case 0: ppixmap = &pixmap0; break;
+            case 1: ppixmap = &pixmap1; break;
+            case 2: ppixmap = &pixmap2; break;
+            case 3: ppixmap = &pixmap3; break;
+            case 4: ppixmap = &pixmap4; break;
+            case 5: ppixmap = &pixmap5; break;
+            case 6: ppixmap = &pixmap6; break;
+            case 7: ppixmap = &pixmap7; break;
+            case 8: ppixmap = &pixmap8; break;
+            case 9: ppixmap = &pixmap9; break;
+            case 10: ppixmap = &pixmap10; break;
             }
-            if (grid[i][j].colour == -2)
-            {
-                painter.drawPixmap(100 * offset_factor + ((grid[i][j].x - 305) * factor), 140 * offset_factor + ((grid[i][j].y - 125) * factor), pixmap_2);
-                painter2.drawPixmap(100 * offset_factor + ((grid[i][j].x - 305) * factor), 140 * offset_factor + ((grid[i][j].y - 125) * factor), pixmap_2);
-            }
-            if (grid[i][j].colour == -3)
-            {
-                painter.drawPixmap(100 * offset_factor + ((grid[i][j].x - 305) * factor), 140 * offset_factor + ((grid[i][j].y - 125) * factor), pixmap_3);
-                painter2.drawPixmap(100 * offset_factor + ((grid[i][j].x - 305) * factor), 140 * offset_factor + ((grid[i][j].y - 125) * factor), pixmap_3);
-            }
-            if (grid[i][j].colour == -4)
-            {
-                painter.drawPixmap(100 * offset_factor + ((grid[i][j].x - 305) * factor), 140 * offset_factor + ((grid[i][j].y - 125) * factor), pixmap_4);
-                painter2.drawPixmap(100 * offset_factor + ((grid[i][j].x - 305) * factor), 140 * offset_factor + ((grid[i][j].y - 125) * factor), pixmap_4);
-            }
-            if (grid[i][j].colour == -5)
-            {
-                painter.drawPixmap(100 * offset_factor + ((grid[i][j].x - 305) * factor), 140 * offset_factor + ((grid[i][j].y - 125) * factor), pixmap_5);
-                painter2.drawPixmap(100 * offset_factor + ((grid[i][j].x - 305) * factor), 140 * offset_factor + ((grid[i][j].y - 125) * factor), pixmap_5);
-            }
-            if (grid[i][j].colour == -6)
-            {
-                painter.drawPixmap(100 * offset_factor + ((grid[i][j].x - 305) * factor), 140 * offset_factor + ((grid[i][j].y - 125) * factor), pixmap_6);
-                painter2.drawPixmap(100 * offset_factor + ((grid[i][j].x - 305) * factor), 140 * offset_factor + ((grid[i][j].y - 125) * factor), pixmap_6);
-            }
-            if (grid[i][j].colour == -7)
-            {
-                painter.drawPixmap(100 * offset_factor + ((grid[i][j].x - 305) * factor), 140 * offset_factor + ((grid[i][j].y - 125) * factor), pixmap_7);
-                painter2.drawPixmap(100 * offset_factor + ((grid[i][j].x - 305) * factor), 140 * offset_factor + ((grid[i][j].y - 125) * factor), pixmap_7);
-            }
-            if (grid[i][j].colour == -8)
-            {
-                painter.drawPixmap(100 * offset_factor + ((grid[i][j].x - 305) * factor), 140 * offset_factor + ((grid[i][j].y - 125) * factor), pixmap_8);
-                painter2.drawPixmap(100 * offset_factor + ((grid[i][j].x - 305) * factor), 140 * offset_factor + ((grid[i][j].y - 125) * factor), pixmap_8);
-            }
-            if (grid[i][j].colour == -9)
-            {
-                painter.drawPixmap(100 * offset_factor + ((grid[i][j].x - 305) * factor), 140 * offset_factor + ((grid[i][j].y - 125) * factor), pixmap_9);
-                painter2.drawPixmap(100 * offset_factor + ((grid[i][j].x - 305) * factor), 140 * offset_factor + ((grid[i][j].y - 125) * factor), pixmap_9);
-            }
-            if (grid[i][j].colour == -10)
-            {
-                painter.drawPixmap(100 * offset_factor + ((grid[i][j].x - 305) * factor), 140 * offset_factor + ((grid[i][j].y - 125) * factor), pixmap_10);
-                painter2.drawPixmap(100 * offset_factor + ((grid[i][j].x - 305) * factor), 140 * offset_factor + ((grid[i][j].y - 125) * factor), pixmap_10);
-            }
-            if (grid[i][j].colour == 0)
-            {
-                painter.drawPixmap(100 * offset_factor + ((grid[i][j].x - 305) * factor), 140 * offset_factor + ((grid[i][j].y - 125) * factor), pixmap0);
-                painter2.drawPixmap(100 * offset_factor + ((grid[i][j].x - 305) * factor), 140 * offset_factor + ((grid[i][j].y - 125) * factor), pixmap0);
-            }
-            if (grid[i][j].colour == 1)
-            {
-                painter.drawPixmap(100 * offset_factor + ((grid[i][j].x - 305) * factor), 140 * offset_factor + ((grid[i][j].y - 125) * factor), pixmap1);
-                painter2.drawPixmap(100 * offset_factor + ((grid[i][j].x - 305) * factor), 140 * offset_factor + ((grid[i][j].y - 125) * factor), pixmap1);
-            }
-            if (grid[i][j].colour == 2)
-            {
-                painter.drawPixmap(100 * offset_factor + ((grid[i][j].x - 305) * factor), 140 * offset_factor + ((grid[i][j].y - 125) * factor), pixmap2);
-                painter2.drawPixmap(100 * offset_factor + ((grid[i][j].x - 305) * factor), 140 * offset_factor + ((grid[i][j].y - 125) * factor), pixmap2);
-            }
-            if (grid[i][j].colour == 3)
-            {
-                painter.drawPixmap(100 * offset_factor + ((grid[i][j].x - 305) * factor), 140 * offset_factor + ((grid[i][j].y - 125) * factor), pixmap3);
-                painter2.drawPixmap(100 * offset_factor + ((grid[i][j].x - 305) * factor), 140 * offset_factor + ((grid[i][j].y - 125) * factor), pixmap3);
-            }
-            if (grid[i][j].colour == 4)
-            {
-                painter.drawPixmap(100 * offset_factor + ((grid[i][j].x - 305) * factor), 140 * offset_factor + ((grid[i][j].y - 125) * factor), pixmap4);
-                painter2.drawPixmap(100 * offset_factor + ((grid[i][j].x - 305) * factor), 140 * offset_factor + ((grid[i][j].y - 125) * factor), pixmap4);
-            }
-            if (grid[i][j].colour == 5)
-            {
-                painter.drawPixmap(100 * offset_factor + ((grid[i][j].x - 305) * factor), 140 * offset_factor + ((grid[i][j].y - 125) * factor), pixmap5);
-                painter2.drawPixmap(100 * offset_factor + ((grid[i][j].x - 305) * factor), 140 * offset_factor + ((grid[i][j].y - 125) * factor), pixmap5);
-            }
-            if (grid[i][j].colour == 6)
-            {
-                painter.drawPixmap(100 * offset_factor + ((grid[i][j].x - 305) * factor), 140 * offset_factor + ((grid[i][j].y - 125) * factor), pixmap6);
-                painter2.drawPixmap(100 * offset_factor + ((grid[i][j].x - 305) * factor), 140 * offset_factor + ((grid[i][j].y - 125) * factor), pixmap6);
-            }
-            if (grid[i][j].colour == 7)
-            {
-                painter.drawPixmap(100 * offset_factor + ((grid[i][j].x - 305) * factor), 140 * offset_factor + ((grid[i][j].y - 125) * factor), pixmap7);
-                painter2.drawPixmap(100 * offset_factor + ((grid[i][j].x - 305) * factor), 140 * offset_factor + ((grid[i][j].y - 125) * factor), pixmap7);
-            }
-            if (grid[i][j].colour == 8)
-            {
-                painter.drawPixmap(100 * offset_factor + ((grid[i][j].x - 305) * factor), 140 * offset_factor + ((grid[i][j].y - 125) * factor), pixmap8);
-                painter2.drawPixmap(100 * offset_factor + ((grid[i][j].x - 305) * factor), 140 * offset_factor + ((grid[i][j].y - 125) * factor), pixmap8);
-            }
-            if (grid[i][j].colour == 9)
-            {
-                painter.drawPixmap(100 * offset_factor + ((grid[i][j].x - 305) * factor), 140 * offset_factor + ((grid[i][j].y - 125) * factor), pixmap9);
-                painter2.drawPixmap(100 * offset_factor + ((grid[i][j].x - 305) * factor), 140 * offset_factor + ((grid[i][j].y - 125) * factor), pixmap9);
-            }
-            if (grid[i][j].colour == 10)
-            {
-                painter.drawPixmap(100 * offset_factor + ((grid[i][j].x - 305) * factor), 140 * offset_factor + ((grid[i][j].y - 125) * factor), pixmap10);
-                painter2.drawPixmap(100 * offset_factor + ((grid[i][j].x - 305) * factor), 140 * offset_factor + ((grid[i][j].y - 125) * factor), pixmap10);
-            }
+            if (ppixmap != NULL)
+                painterpair.drawPixmap(xCoord, yCoord, *ppixmap);
         }
     }
 
@@ -629,69 +583,27 @@ void RenderArea::plotPixmaps()
         dis_factor = dis_factor * -2;
         for (int i = 0; i < D.size(); i++)
         {
+            int xCoord = 100 * offset_factor + (D[i].xd - 321) * factor;
+            int yCoord = 140 * offset_factor + (D[i].y - 141) * factor;
             //qDebug() << "type " << D[i].B << " pos (x,y)" << D[i].xd << "," << D[i].y;
-            if (D[i].B == 5)
+            const QPixmap *ppixmap = NULL;
+            switch (D[i].B)
             {
-                painter.drawPixmap(100 * offset_factor + (D[i].xd - 321) * factor, 140 * offset_factor + (D[i].y - 141) * factor, dis_factor, dis_factor, pixmapD5);
-                painter2.drawPixmap(100 * offset_factor + (D[i].xd - 321) * factor, 140 * offset_factor + (D[i].y - 141) * factor, dis_factor, dis_factor, pixmapD5);
+            case 5: ppixmap = &pixmapD5; break;
+            case 6: ppixmap = &pixmapD6; break;
+            case 7: ppixmap = &pixmapD7; break;
+            case 8: ppixmap = &pixmapD8; break;
+            case 9: ppixmap = &pixmapD9; break;
+            case 10: ppixmap = &pixmapD10; break;
+            case 11: ppixmap = &pixmapD11; break;
+            case 12: ppixmap = &pixmapD12; break;
+            case 13: ppixmap = &pixmapD13; break;
+            case 14: ppixmap = &pixmapD14; break;
+            case 15: ppixmap = &pixmapD15; break;
+            case 16: ppixmap = &pixmapD16; break;
             }
-            if (D[i].B == 6)
-            {
-                painter.drawPixmap(100 * offset_factor + (D[i].xd - 321) * factor, 140 * offset_factor + (D[i].y - 141) * factor, dis_factor, dis_factor, pixmapD6);
-                painter2.drawPixmap(100 * offset_factor + (D[i].xd - 321) * factor, 140 * offset_factor + (D[i].y - 141) * factor, dis_factor, dis_factor, pixmapD6);
-            }
-            if (D[i].B == 7)
-            {
-                painter.drawPixmap(100 * offset_factor + (D[i].xd - 321) * factor, 140 * offset_factor + (D[i].y - 141) * factor, dis_factor, dis_factor, pixmapD7);
-                painter2.drawPixmap(100 * offset_factor + (D[i].xd - 321) * factor, 140 * offset_factor + (D[i].y - 141) * factor, dis_factor, dis_factor, pixmapD7);
-            }
-            if (D[i].B == 8)
-            {
-                painter.drawPixmap(100 * offset_factor + (D[i].xd - 321) * factor, 140 * offset_factor + (D[i].y - 141) * factor, dis_factor, dis_factor, pixmapD8);
-                painter2.drawPixmap(100 * offset_factor + (D[i].xd - 321) * factor, 140 * offset_factor + (D[i].y - 141) * factor, dis_factor, dis_factor, pixmapD8);
-            }
-            if (D[i].B == 9)
-            {
-                painter.drawPixmap(100 * offset_factor + (D[i].xd - 321) * factor, 140 * offset_factor + (D[i].y - 141) * factor, dis_factor, dis_factor, pixmapD9);
-                painter2.drawPixmap(100 * offset_factor + (D[i].xd - 321) * factor, 140 * offset_factor + (D[i].y - 141) * factor, dis_factor, dis_factor, pixmapD9);
-            }
-            if (D[i].B == 10)
-            {
-                painter.drawPixmap(100 * offset_factor + (D[i].xd - 321) * factor, 140 * offset_factor + (D[i].y - 141) * factor, dis_factor, dis_factor, pixmapD10);
-                painter2.drawPixmap(100 * offset_factor + (D[i].xd - 321) * factor, 140 * offset_factor + (D[i].y - 141) * factor, dis_factor, dis_factor, pixmapD10);
-            }
-            if (D[i].B == 11)
-            {
-                painter.drawPixmap(100 * offset_factor + (D[i].xd - 321) * factor, 140 * offset_factor + (D[i].y - 141) * factor, dis_factor, dis_factor, pixmapD11);
-                painter2.drawPixmap(100 * offset_factor + (D[i].xd - 321) * factor, 140 * offset_factor + (D[i].y - 141) * factor, dis_factor, dis_factor, pixmapD11);
-            }
-            if (D[i].B == 12)
-            {
-                painter.drawPixmap(100 * offset_factor + (D[i].xd - 321) * factor, 140 * offset_factor + (D[i].y - 141) * factor, dis_factor, dis_factor, pixmapD12);
-                painter2.drawPixmap(100 * offset_factor + (D[i].xd - 321) * factor, 140 * offset_factor + (D[i].y - 141) * factor, dis_factor, dis_factor, pixmapD12);
-            }
-            if (D[i].B == 13)
-            {
-                painter.drawPixmap(100 * offset_factor + (D[i].xd - 321) * factor, 140 * offset_factor + (D[i].y - 141) * factor, dis_factor, dis_factor, pixmapD13);
-                painter2.drawPixmap(100 * offset_factor + (D[i].xd - 321) * factor, 140 * offset_factor + (D[i].y - 141) * factor, dis_factor, dis_factor, pixmapD13);
-            }
-            if (D[i].B == 14)
-            {
-                painter.drawPixmap(100 * offset_factor + (D[i].xd - 321) * factor, 140 * offset_factor + (D[i].y - 141) * factor, dis_factor, dis_factor, pixmapD14);
-                painter2.drawPixmap(100 * offset_factor + (D[i].xd - 321) * factor, 140 * offset_factor + (D[i].y - 141) * factor, dis_factor, dis_factor, pixmapD14);
-            }
-            if (D[i].B == 15)
-            {
-                painter.drawPixmap(100 * offset_factor + (D[i].xd - 321) * factor, 140 * offset_factor + (D[i].y - 141) * factor, dis_factor, dis_factor, pixmapD15);
-                painter2.drawPixmap(100 * offset_factor + (D[i].xd - 321) * factor, 140 * offset_factor + (D[i].y - 141) * factor, dis_factor, dis_factor, pixmapD15);
-            }
-            if (D[i].B == 16)
-            {
-                painter.drawPixmap(100 * offset_factor + (D[i].xd - 321) * factor, 140 * offset_factor + (D[i].y - 141) * factor, dis_factor, dis_factor, pixmapD16);
-                painter2.drawPixmap(100 * offset_factor + (D[i].xd - 321) * factor, 140 * offset_factor + (D[i].y - 141) * factor, dis_factor, dis_factor, pixmapD16);
-            }
-
-
+            if (ppixmap != NULL)
+                painterpair.drawPixmap(xCoord, yCoord, dis_factor, dis_factor, *ppixmap);
         }
     }
     else
@@ -699,89 +611,65 @@ void RenderArea::plotPixmaps()
         //plot dislocation pixmaps onto screen and image. The pixmaps themselves are also scaled in this case by same scaling factor.
         for (int i = 0; i < D.size(); i++)
         {
-            double burg;
-            if (D[i].B1 < 0)
-            {
-                burg = (-1 * D[i].B1);
-            }
-            else
-            {
-                burg = D[i].B1;
-            }
+            double burg = (D[i].B1 < 0) ? -D[i].B1 : D[i].B1;
 
+            int xCoord = 100 * offset_factor + (D[i].xd - 300) * factor;
+            int yCoord = 140 * offset_factor + (D[i].y - 120) * factor;
             if (burg == basal_B || burg <= atom_sep * 1E-10)
             {
-                if (D[i].B == 1)
+                switch (D[i].B)
                 {
-                    painter.drawPixmap(100 * offset_factor + (D[i].xd - 300) * factor, 140 * offset_factor + (D[i].y - 120) * factor, dis_factor, dis_factor, pixmapU);
-                    painter2.drawPixmap(100 * offset_factor + (D[i].xd - 300) * factor, 140 * offset_factor + (D[i].y - 120) * factor, dis_factor, dis_factor, pixmapU);
+                case 1:
+                    painterpair.drawPixmap(xCoord, yCoord, dis_factor, dis_factor, pixmapU);
+                    break;
+                case 2:
+                    painterpair.drawPixmap(xCoord, yCoord, dis_factor, dis_factor, pixmapD);
+                    break;
+                case 3:
+                    painterpair.drawPixmap(xCoord, yCoord, dis_factor2, dis_factor2, pixmapLT);
+                    break;
+                case 4:
+                    painterpair.drawPixmap(xCoord, yCoord, dis_factor2, dis_factor2, pixmapRT);
+                    break;
                 }
-                else if (D[i].B == 2)
-                {
-                    painter.drawPixmap(100 * offset_factor + (D[i].xd - 300) * factor, 140 * offset_factor + (D[i].y - 120) * factor, dis_factor, dis_factor, pixmapD);
-                    painter2.drawPixmap(100 * offset_factor + (D[i].xd - 300) * factor, 140 * offset_factor + (D[i].y - 120) * factor, dis_factor, dis_factor, pixmapD);
-                }
-                else if (D[i].B == 3)
-                {
-                    painter.drawPixmap(100 * offset_factor + (D[i].xd - 300) * factor, 140 * offset_factor + (D[i].y - 120) * factor, dis_factor2, dis_factor2, pixmapLT);
-                    painter2.drawPixmap(100 * offset_factor + (D[i].xd - 300) * factor, 140 * offset_factor + (D[i].y - 120) * factor, dis_factor2, dis_factor2, pixmapLT);
-                }
-                else if (D[i].B == 4)
-                {
-                    painter.drawPixmap(100 * offset_factor + (D[i].xd - 300) * factor, 140 * offset_factor + (D[i].y - 120) * factor, dis_factor2, dis_factor2, pixmapRT);
-                    painter2.drawPixmap(100 * offset_factor + (D[i].xd - 300) * factor, 140 * offset_factor + (D[i].y - 120) * factor, dis_factor2, dis_factor2, pixmapRT);
-                }
-
             }
 
 
             if (burg == (2 * basal_B) || burg == (2 * atom_sep * 1E-10))
             {
-                if (D[i].B == 1)
+                const QPixmap *ppixmap = NULL;
+                switch (D[i].B)
                 {
-                    painter.drawPixmap(100 * offset_factor + (D[i].xd - 300) * factor, 140 * offset_factor + (D[i].y - 120) * factor, dis_factor, dis_factor, pixmapDU);
-                    painter2.drawPixmap(100 * offset_factor + (D[i].xd - 300) * factor, 140 * offset_factor + (D[i].y - 120) * factor, dis_factor, dis_factor, pixmapDU);
+                case 1: ppixmap = &pixmapDU; break;
+                case 2: ppixmap = &pixmapDD; break;
+                case 3: ppixmap = &pixmapDLT; break;
+                case 4: ppixmap = &pixmapDRT; break;
                 }
-                else if (D[i].B == 2)
-                {
-                    painter.drawPixmap(100 * offset_factor + (D[i].xd - 300) * factor, 140 * offset_factor + (D[i].y - 120) * factor, dis_factor, dis_factor, pixmapDD);
-                    painter2.drawPixmap(100 * offset_factor + (D[i].xd - 300) * factor, 140 * offset_factor + (D[i].y - 120) * factor, dis_factor, dis_factor, pixmapDD);
-                }
-                else if (D[i].B == 3)
-                {
-                    painter.drawPixmap(100 * offset_factor + (D[i].xd - 300) * factor, 140 * offset_factor + (D[i].y - 120) * factor, dis_factor, dis_factor, pixmapDLT);
-                    painter2.drawPixmap(100 * offset_factor + (D[i].xd - 300) * factor, 140 * offset_factor + (D[i].y - 120) * factor, dis_factor, dis_factor, pixmapDLT);
-                }
-                else if (D[i].B == 4)
-                {
-                    painter.drawPixmap(100 * offset_factor + (D[i].xd - 300) * factor, 140 * offset_factor + (D[i].y - 120) * factor, dis_factor, dis_factor, pixmapDRT);
-                    painter2.drawPixmap(100 * offset_factor + (D[i].xd - 300) * factor, 140 * offset_factor + (D[i].y - 120) * factor, dis_factor, dis_factor, pixmapDRT);
-                }
+                if (ppixmap != NULL)
+                    painterpair.drawPixmap(xCoord, yCoord, dis_factor, dis_factor, *ppixmap);
             }
             if (burg >= (3 * atom_sep * 1E-10))
             {
-                if (D[i].B == 1)
+                switch (D[i].B)
                 {
-                    painter.drawPixmap(100 * offset_factor + (D[i].xd - 300) * factor, 140 * offset_factor + (D[i].y - 120) * factor, dis_factor, dis_factor, pixmapTU);
-                    painter2.drawPixmap(100 * offset_factor + (D[i].xd - 300) * factor, 140 * offset_factor + (D[i].y - 120) * factor, dis_factor, dis_factor, pixmapTU);
-                }
-                else if (D[i].B == 2)
-                {
-                    painter.drawPixmap(100 * offset_factor + (D[i].xd - 300) * factor, 140 * offset_factor + (D[i].y - 120) * factor, dis_factor, dis_factor, pixmapTD);
-                    painter2.drawPixmap(100 * offset_factor + (D[i].xd - 300) * factor, 140 * offset_factor + (D[i].y - 120) * factor, dis_factor, dis_factor, pixmapTD);
+                case 1:
+                    painterpair.drawPixmap(xCoord, yCoord, dis_factor, dis_factor, pixmapTU);
+                    break;
+                case 2:
+                    painterpair.drawPixmap(xCoord, yCoord, dis_factor, dis_factor, pixmapTD);
+                    break;
                 }
             }
             if (burg >= (3 * basal_B))
             {
-                if (D[i].B == 3)
+                switch (D[i].B)
                 {
-                    painter.drawPixmap(100 * offset_factor + (D[i].xd - 300) * factor, 140 * offset_factor + (D[i].y - 120) * factor, dis_factor, dis_factor, pixmapTLT);
-                    painter2.drawPixmap(100 * offset_factor + (D[i].xd - 300) * factor, 140 * offset_factor + (D[i].y - 120) * factor, dis_factor, dis_factor, pixmapTLT);
-                }
-                else if (D[i].B == 4)
-                {
-                    painter.drawPixmap(100 * offset_factor + (D[i].xd - 300) * factor, 140 * offset_factor + (D[i].y - 120) * factor, dis_factor, dis_factor, pixmapTRT);
-                    painter2.drawPixmap(100 * offset_factor + (D[i].xd - 300) * factor, 140 * offset_factor + (D[i].y - 120) * factor, dis_factor, dis_factor, pixmapTRT);
+                case 3:
+                    painterpair.drawPixmap(xCoord, yCoord, dis_factor, dis_factor, pixmapTLT);
+                    break;
+                case 4:
+                    painterpair.drawPixmap(xCoord, yCoord, dis_factor, dis_factor, pixmapTRT);
+                    break;
                 }
             }
 
@@ -789,9 +677,7 @@ void RenderArea::plotPixmaps()
             {
                 QString burgm;
                 burgm.append(QString("%1").arg(burg, 0, 'G', 1));
-                //painter.drawText(-107 - 14 * factor + D[i].x * factor, 35 + D[i].y * factor, burgm);
-                //painter2.drawText(-107 - 14 * factor + D[i].x * factor, 35 + D[i].y * factor, burgm);
-
+                //painterpair.drawText(-107 - 14 * factor + D[i].x * factor, 35 + D[i].y * factor, burgm);
             }
 
         }

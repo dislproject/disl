@@ -1,3 +1,6 @@
+#ifndef STRUCTURE_HPP
+#define STRUCTURE_HPP
+
 class Structure
 {
 
@@ -35,3 +38,5 @@ public:
     void Add_nonBasals();
     void Inplane_rounding();
 };
+
+#endif // STRUCTURE_HPP

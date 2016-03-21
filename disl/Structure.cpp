@@ -1,10 +1,8 @@
-
-
 #include <boost/random.hpp>
 #include <boost/generator_iterator.hpp>
 #include <boost/nondet_random.hpp>
-#include "externVar.h"
 
+#include "externVar.h"
 
 QList<QPoint> disl_positions;
 using namespace boost;

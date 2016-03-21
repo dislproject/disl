@@ -1,5 +1,9 @@
+#ifndef MAINWINDOW_H
+#define MAINWINDOW_H
+
 #include "ui_mainwindow.h"
 #include "externVar.h"
+
 //extern const int g_T;
 
 
@@ -27,3 +31,5 @@ public slots:
 private:
     Ui::MainWindow ui;
 };
+
+#endif // MAINWINDOW_H

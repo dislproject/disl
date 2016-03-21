@@ -13,6 +13,9 @@
 //#ifndef y_max // y limit of area for disls
 //#define y_max 1640.
 //#endif
+#ifndef DISL_HPP
+#define DISL_HPP
+
 #ifndef nu
 #define nu 0.31 // poisson ratio
 #endif
@@ -143,3 +146,5 @@ public:
     friend class Edge;
 
 };
+
+#endif // DISL_HPP

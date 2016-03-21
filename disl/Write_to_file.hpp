@@ -1,7 +1,12 @@
 //////////////////////////////////////////////////
 // write disl positions to dat files
 //////////////////////////////////////////////////
+
+#ifndef WRITE_TO_FILE_HPP
+#define WRITE_TO_FILE_HPP
+
 #include "externVar.h"
+
 double cexpansion, aexpansion;
 double total_area;
 class Write
@@ -300,3 +305,4 @@ void Write::Area()
      */
 }
 
+#endif // WRITE_TO_FILE_HPP

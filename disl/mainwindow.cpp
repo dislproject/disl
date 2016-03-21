@@ -1,23 +1,24 @@
-#include <QtWidgets>
+#include "externVar.h"
+
 #include <QMovie>
-#include <QDebug>
+
 #include <ImageMagick/Magick++.h>
+
 #include <math.h>
-#include "renderarea.h"
-#include "mainwindow.h"
 #include <iostream>
 #include <fstream>
 #include <iomanip>
 #include <sstream>
 #include <cstdlib>
 #include <time.h>
-#include "Write_to_file.hpp"
-#include "externVar.h"
-#include "interaction.h"
 #include <list>
 #include <time.h>
 #include <sys/time.h>
 
+#include "renderarea.h"
+#include "mainwindow.h"
+#include "Write_to_file.hpp"
+#include "interaction.h"
 
 using namespace std;
 using namespace Magick;

@@ -1,4 +1,6 @@
-#include <math.h>
+#ifndef EDGE_HPP
+#define EDGE_HPP
+
 #ifndef edge_length
 #define edge_length 3.32 // arbitrary edge length
 #endif
@@ -39,3 +41,4 @@ public:
 };
 
 
+#endif // EDGE_HPP

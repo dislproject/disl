@@ -1,4 +1,5 @@
-
+#ifndef ENERGY_HPP
+#define ENERGY_HPP
 
 class Energy
 {
@@ -31,3 +32,4 @@ public:
 
 };
 
+#endif // ENERGY_HPP

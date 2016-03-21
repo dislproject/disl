@@ -45,3 +45,11 @@ LIBS += \
     -lMagickCore \
 
 QT += widgets
+
+# Additonal targets
+
+imagesclean.target = imagesclean
+imagesclean.commands = $(DEL_FILE) Animate/images/*.bmp
+
+QMAKE_EXTRA_TARGETS += imagesclean
+

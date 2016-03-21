@@ -6,9 +6,12 @@
 #define UNUSED(...) (void)(__VA_ARGS__)
 
 #include <Eigen/Dense>
+
+#include <QtWidgets>
+
 #include <stdio.h>
 #include <stdlib.h>
-#include <QtWidgets>
+
 extern double total_area;
 extern double material_height;
 extern double material_width;

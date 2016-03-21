@@ -143,14 +143,7 @@ int Interaction::Calc_interaction(int d1, int d2, int x1, int x2)
                     {
                         D[d1].B1 = D[d1].by = new_burg;
                         D[d1].re_run = true;
-                        if (D[d1].B1 > 0)
-                        {
-                            D[d1].B = 3;
-                        }
-                        else
-                        {
-                            D[d1].B = 4;
-                        }
+                        D[d1].B = (D[d1].B1 > 0) ? 3 : 4;
                         D.removeAt(d2);
                     }
                     else
@@ -189,14 +182,7 @@ int Interaction::Calc_interaction(int d1, int d2, int x1, int x2)
                         //qDebug() << "2.2 ch=0";
                         D[d2].B1 = D[d2].by = new_burg;
                         D[d2].re_run = true;
-                        if (D[d2].B1 > 0)
-                        {
-                            D[d2].B = 3;
-                        }
-                        else
-                        {
-                            D[d2].B = 4;
-                        }
+                        D[d2].B = (D[d2].B1 > 0) ? 3 : 4;
                         D.removeAt(d1);
                     }
                     else
@@ -427,14 +413,7 @@ double Interaction::calc_netburg()
     double burg_mag;
     for (int d = 0; d < D.size(); d++)
     {
-        if (D[d].B1 < 0)
-        {
-            burg_mag = ((-1) * D[d].B1);
-        }
-        else
-        {
-            burg_mag = D[d].B1;
-        }
+        burg_mag = (D[d].B1 < 0) ? -D[d].B1 : D[d].B1;
         burg_tot += burg_mag;
     }
 
@@ -763,14 +742,7 @@ int Interaction::Calc_interaction(int d1, int d2)
 
             if (basals == 1)
             {
-                if (D[d1].B1 > 0)
-                {
-                    D[d1].B = 1;
-                }
-                else
-                {
-                    D[d1].B = 2;
-                }
+                D[d1].B = (D[d1].B1 > 0) ? 1 : 2;
                 D[d1].bx = D[d1].B1;
                 D[d1].by = 0;
             }
@@ -944,28 +916,14 @@ int Interaction::Calc_interaction(int d1, int d2)
                         //structure.add_edge_material();
                     }
                     D[d1].B1 += D[d2].B1;
-                    if (D[d1].B1 > 0)
-                    {
-                        D[d1].B = 1;
-                    }
-                    else
-                    {
-                        D[d1].B = 2;
-                    }
+                    D[d1].B = (D[d1].B1 > 0) ? 1 : 2;
                     D[d1].bx = D[d1].B1;
                     D[d1].by = 0;
                 }
                 else if (basals == 1 && (D[d1].B == 3 || D[d2].B == 3))
                 {
                     D[d1].B1 = newburg;
-                    if (D[d1].B1 < 0)
-                    {
-                        D[d1].B = 4;
-                    }
-                    else
-                    {
-                        D[d1].B = 3;
-                    }
+                    D[d1].B = (D[d1].B1 < 0) ? 4 : 3;
                     D[d1].by = D[d1].B1;
                     D[d1].bx = 0;
                 }
@@ -1415,7 +1373,7 @@ void Interaction::check_for_ruck_tuck_growth() //checks if any basals are glidin
                     double xsep = D[d1].xd - D[d2].xd;
                     if (xsep < 0)
                     {
-                        xsep = xsep * -1;
+                        xsep = -xsep;
                     }
 
                     if (xsep < 100)
@@ -1423,7 +1381,7 @@ void Interaction::check_for_ruck_tuck_growth() //checks if any basals are glidin
                         double ysep = D[d1].y - D[d2].y;
                         //if (ysep < 0)
                         //{
-                        //    ysep = ysep * -1;
+                        //    ysep = -ysep;
                         //}
                         //qDebug() << "d1.y" << D[d1].y << "d2.y" << D[d2].y << ysep << (0.5 * int_layer_sep);
                         if (ysep >= -0.6 * int_layer_sep && ysep <= -0.4 * int_layer_sep)
@@ -1440,7 +1398,7 @@ void Interaction::check_for_ruck_tuck_growth() //checks if any basals are glidin
                     double xsep = D[d1].xd - D[d2].xd;
                     if (xsep < 0)
                     {
-                        xsep = xsep * -1;
+                        xsep = -xsep;
                     }
                     //qDebug() << xsep;
                     if (xsep < 100)
@@ -1448,7 +1406,7 @@ void Interaction::check_for_ruck_tuck_growth() //checks if any basals are glidin
                         double ysep = D[d1].y - D[d2].y;
                         //if (ysep < 0)
                         //{
-                        //    ysep = ysep * -1;
+                        //    ysep = -ysep;
                         //}
                         //qDebug() << "d1.y" << D[d1].y << "d2.y" << D[d2].y << ysep << (0.5 * int_layer_sep);
                         if (ysep <= 0.6 * int_layer_sep && ysep >= 0.4 * int_layer_sep)
